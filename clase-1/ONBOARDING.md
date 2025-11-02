@@ -18,6 +18,120 @@ Guía rápida para configurar el entorno de MLOps.
 
 ---
 
+## Instalar Visual Studio Code
+
+**Descargar e instalar VS Code:**
+
+1. Ir a: `https://code.visualstudio.com/`
+2. Descargar la versión para tu OS (Windows, Mac, Linux)
+3. Instalar siguiendo los pasos del instalador
+4. Abrir VS Code
+
+---
+
+## Clonar el Repositorio
+
+Una vez tengas VS Code instalado, clonaremos el repositorio desde GitHub:
+
+### Opción 1: Desde VS Code (Recomendado)
+
+1. Abrir **VS Code**
+2. Presionar `Ctrl+Shift+P` (Windows/Linux) o `Cmd+Shift+P` (Mac)
+3. Buscar y seleccionar **"Git: Clone"**
+4. Pegar la URL del repositorio:
+   ```
+   https://github.com/PabloBandeira/MLOps.git
+   ```
+5. Seleccionar dónde guardar (ej: `~/Desktop/MLops`)
+6. VS Code abrirá automáticamente el repositorio
+
+### Opción 2: Desde Terminal
+
+```bash
+# Navegar a donde quieras guardar el proyecto
+cd ~/Desktop
+
+# Clonar el repositorio
+git clone https://github.com/PabloBandeira/MLOps.git
+
+# Entrar al directorio
+cd MLops/clase-1
+```
+
+---
+
+## Workflow: Subir tus Cambios (Alumnos)
+
+Una vez hayas clonado el repositorio, seguirás este workflow para subir tus modificaciones y resultados:
+
+### 1. Crear tu rama personal
+
+```bash
+# Crear y cambiar a tu rama (usa tu nombre o identificador)
+git checkout -b feature/tu-nombre
+```
+
+**Ejemplo:**
+```bash
+git checkout -b feature/juan-perez
+```
+
+---
+
+### 2. Hacer cambios y experimentar
+
+Ahora puedes modificar archivos, agregar experimentos, scripts, etc. Tu rama es segura y no afectará el código principal.
+
+```bash
+# Edita archivos, agrega experimentos, modifica resultados...
+```
+
+---
+
+### 3. Subir tus cambios
+
+```bash
+# Ver qué cambios hiciste
+git status
+
+# Agregar tus cambios
+git add .
+
+# Crear commits con descripciones claras (puedes hacer varios)
+git commit -m "Experimento: [descripción de qué hiciste]"
+
+# Ejemplos:
+git commit -m "Experimento: Ajusté hiperparámetros del modelo"
+git commit -m "Agregué visualizaciones de resultados"
+git commit -m "Mejoré accuracy a 0.95"
+
+# Pushear tu rama al repositorio
+git push origin feature/tu-nombre
+```
+
+---
+
+### 4. El profesor revisa tu código
+
+El profesor accede a GitHub y revisa:
+- Tu rama en: `https://github.com/PabloBandeira/MLOps`
+- Todos tus commits
+- Los cambios que hiciste
+- Tus resultados y experimentos
+
+**Tu código está visible para revisar sin necesidad de Pull Request.**
+
+---
+
+### ⚠️ Importante
+
+- **NO pushees directamente a `main`** - siempre usa tu rama personal (`feature/tu-nombre`)
+- Cada cambio importante = nuevo commit con descripción clara
+- Los commits permiten que el profesor vea el progreso paso a paso
+- Tu rama se mantiene segura y separada del código principal
+
+---
+
 ## Setup Rápido por OS
 
 ### Windows (Git Bash)
@@ -35,7 +149,7 @@ Guía rápida para configurar el entorno de MLOps.
 cd /c/Users/<tu-usuario>/Desktop/MLops/clase-1
 
 # Crear y activar venv
-py -3.11 -m venv .venv || python -m venv .venv
+py -3.11 -m venv .venv || python -m venv .venv || python3 -m venv .venv
 source .venv/Scripts/activate
 
 # Verificar activación (debe mostrar ruta a .venv)
@@ -49,7 +163,7 @@ pip install -r requirements.txt -r requirements-dev.txt
 pre-commit install
 
 # Verificar instalación
-pytest -q
+python -m pytest -q
 python src/train.py
 ```
 
@@ -77,7 +191,7 @@ python3.11 --version
 cd ~/Desktop/MLops/clase-1
 
 # Crear y activar venv
-python3.11 -m venv .venv
+python3.11 -m venv .venv || python -m venv .venv || python3 -m venv .venv
 source .venv/bin/activate
 
 # Verificar activación (debe mostrar ruta a .venv)
@@ -91,16 +205,8 @@ pip install -r requirements.txt -r requirements-dev.txt
 pre-commit install
 
 # Verificar instalación
-pytest -q
+python -m pytest -q
 python src/train.py
-```
-
-**Si Apple Silicon (M1/M2/M3):**
-
-```bash
-# Usar platform específica si hay problemas
-docker build --platform=linux/amd64 -t demo-ml:local .
-docker run --rm --platform=linux/amd64 -v "$PWD:/app" demo-ml:local
 ```
 
 ---
@@ -131,7 +237,7 @@ ruff.....................................................................Passed
 **Comando:**
 
 ```bash
-pytest -q
+python -m pytest -q
 ```
 
 **Salida esperada:**
@@ -165,12 +271,20 @@ f1_macro: 0.9667
 **Windows (Git Bash):**
 
 ```bash
+# Navegar a la carpeta del proyecto primero
+cd /c/Users/<tu-usuario>/Desktop/MLops/clase-1
+
+# Construir imagen
 docker build -t demo-ml:local .
 ```
 
 **Mac:**
 
 ```bash
+# Navegar a la carpeta del proyecto primero
+cd ~/Desktop/MLops/clase-1
+
+# Construir imagen
 docker build -t demo-ml:local .
 ```
 
@@ -190,12 +304,20 @@ docker build -t demo-ml:local .
 **Windows (Git Bash):**
 
 ```bash
+# Asegúrate de estar en la carpeta clase-1
+cd /c/Users/<tu-usuario>/Desktop/MLops/clase-1
+
+# Ejecutar contenedor
 MSYS_NO_PATHCONV=1 docker run --rm -v "$PWD:/app" demo-ml:local
 ```
 
 **Mac:**
 
 ```bash
+# Asegúrate de estar en la carpeta clase-1
+cd ~/Desktop/MLops/clase-1
+
+# Ejecutar contenedor
 docker run --rm -v "$PWD:/app" demo-ml:local
 ```
 
@@ -223,27 +345,6 @@ git config --global user.email "tu.email@ejemplo.com"
 git config --global core.autocrlf input
 ```
 
----
-
-## Crear Repositorio GitHub
-
-**Desde la línea de comandos:**
-
-```bash
-# Inicializar repo
-git init
-
-# Agregar archivos
-git add .
-
-# Commit inicial
-git commit -m "Initial commit - Clase 1"
-
-# Crear repo en GitHub (manual) y conectar:
-git remote add origin https://github.com/<usuario>/<repo>.git
-git branch -M main
-git push -u origin main
-```
 
 ---
 
@@ -299,6 +400,18 @@ sudo usermod -aG docker $USER
 # Logout y login nuevamente
 ```
 
+**Apple Silicon (M1/M2/M3) - Si Docker falla:**
+
+Si tienes problemas con Docker en Mac Apple Silicon, usa estos comandos en lugar de los normales:
+
+```bash
+# En lugar de: docker build -t demo-ml:local .
+docker build --platform=linux/amd64 -t demo-ml:local .
+
+# En lugar de: docker run --rm -v "$PWD:/app" demo-ml:local
+docker run --rm --platform=linux/amd64 -v "$PWD:/app" demo-ml:local
+```
+
 ---
 
 ## Resumen de Comandos por OS
@@ -314,9 +427,12 @@ sudo usermod -aG docker $USER
 
 ## Siguiente Paso
 
-Una vez que todos los chequeos pasen, estás listo para:
+Una vez que todos los chequeos pasen localmente (en tu máquina):
 
-1. Pushear tu código a GitHub
-2. Verificar que el CI/CD (GitHub Actions) pase
-3. Continuar con **Clase 2 - MLflow**
+1. **Crear tu rama**: `git checkout -b feature/tu-nombre`
+2. **Hacer cambios y pushear** a tu rama
+3. **GitHub Actions correrá automáticamente** en tu rama y verás si los tests pasan
+4. **El profesor revisará tu rama** directamente en GitHub
+5. Cuando estés listo, continúa con **Clase 2 - MLflow**
+
 
