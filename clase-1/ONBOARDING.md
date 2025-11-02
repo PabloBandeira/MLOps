@@ -260,13 +260,15 @@ python src/train.py
 **Salida esperada:**
 
 ```
-acc: 0.9667
-f1_macro: 0.9667
+acc: 0.9667 | acc: 1.0000
+f1_macro: 0.9667 | f1_macro: 1.0000
 ```
 
 ---
 
 ### 4. Docker build
+
+**ABRIR DOCKER DESKTOP**
 
 **Windows (Git Bash):**
 
@@ -311,6 +313,12 @@ cd /c/Users/<tu-usuario>/Desktop/MLops/clase-1
 MSYS_NO_PATHCONV=1 docker run --rm -v "$PWD:/app" demo-ml:local
 ```
 
+**Salida esperada:**
+
+acc: 0.9667 | acc: 1.0000
+f1_macro: 0.9667 | f1_macro: 1.0000
+```
+```
 **Mac:**
 
 ```bash
@@ -323,9 +331,28 @@ docker run --rm -v "$PWD:/app" demo-ml:local
 
 **Salida esperada:**
 
+acc: 0.9667 | acc: 1.0000
+f1_macro: 0.9667 | f1_macro: 1.0000
 ```
-acc: 0.9667
-f1_macro: 0.9667
+```
+**Apple Silicon (M1/M2/M3) - Si Docker falla:**
+
+Si tienes problemas con Docker en Mac Apple Silicon, usa estos comandos en lugar de los normales:
+
+```bash
+# En lugar de: docker build -t demo-ml:local .
+docker build --platform=linux/amd64 -t demo-ml:local .
+
+# En lugar de: docker run --rm -v "$PWD:/app" demo-ml:local
+docker run --rm --platform=linux/amd64 -v "$PWD:/app" demo-ml:local
+```
+
+
+**Salida esperada:**
+
+```
+acc: 0.9667 | acc: 1.0000
+f1_macro: 0.9667 | f1_macro: 1.0000
 ```
 
 ---
@@ -400,17 +427,6 @@ sudo usermod -aG docker $USER
 # Logout y login nuevamente
 ```
 
-**Apple Silicon (M1/M2/M3) - Si Docker falla:**
-
-Si tienes problemas con Docker en Mac Apple Silicon, usa estos comandos en lugar de los normales:
-
-```bash
-# En lugar de: docker build -t demo-ml:local .
-docker build --platform=linux/amd64 -t demo-ml:local .
-
-# En lugar de: docker run --rm -v "$PWD:/app" demo-ml:local
-docker run --rm --platform=linux/amd64 -v "$PWD:/app" demo-ml:local
-```
 
 ---
 
