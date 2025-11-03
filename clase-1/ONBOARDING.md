@@ -109,6 +109,10 @@ git commit -m "Experimento: Ajusté hiperparámetros del modelo"
 git commit -m "Agregué visualizaciones de resultados"
 git commit -m "Mejoré accuracy a 0.95"
 
+# Primer push a la rama
+
+git push --set-upstream origin feature/tu-nombre
+
 # Pushear tu rama al repositorio
 git push origin feature/tu-nombre
 ```
@@ -159,6 +163,9 @@ source .venv/Scripts/activate
 # Verificar activación (debe mostrar ruta a .venv)
 which python
 
+# Entramos a la carpeta de la clase 1 para instalar las librerias
+cd clase-1
+
 # Instalar dependencias
 pip install --upgrade pip
 pip install -r requirements.txt -r requirements-dev.txt
@@ -205,13 +212,8 @@ which python
 pip install --upgrade pip
 pip install -r requirements.txt -r requirements-dev.txt
 
-# Configurar pre-commit
-pre-commit install
 
-# Verificar instalación
-python -m pytest -q
-python src/train.py
-```
+# Analizamos el codigo de src/train.py
 
 ---
 
@@ -315,6 +317,9 @@ cd /c/Users/<tu-usuario>/Desktop/MLops/clase-1
 
 # Ejecutar contenedor
 MSYS_NO_PATHCONV=1 docker run --rm -v "$PWD:/app" demo-ml:local
+
+# Si estás en Powershell
+$Env:MSYS_NO_PATHCONV=1; docker run --rm -v "${PWD}:/app" demo-ml:local
 ```
 
 **Salida esperada:**
@@ -450,9 +455,16 @@ sudo usermod -aG docker $USER
 Una vez que todos los chequeos pasen localmente (en tu máquina):
 
 1. **Crear tu rama**: `git checkout -b feature/tu-nombre`
-2. **Hacer cambios y pushear** a tu rama
-3. **GitHub Actions correrá automáticamente** en tu rama y verás si los tests pasan
-4. **El profesor revisará tu rama** directamente en GitHub
-5. Cuando estés listo, continúa con **Clase 2 - MLflow**
+2. **Hacer cambios** 
+PROBLEMATICA add . y venv con librerías. Como arreglarlo?
+
+Utilizamos Github copilot. 
+Necesitamos que genere un .gitignore para no incluir las librerías de venv.
+
+
+3. **Pushear** a tu rama
+4. **GitHub Actions correrá automáticamente** en tu rama y verás si los tests pasan
+5. **El profesor revisará tu rama** directamente en GitHub
+6. Cuando estés listo, continúa con **Clase 2 - MLflow**
 
 
