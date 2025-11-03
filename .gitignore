@@ -1,0 +1,24 @@
+# Ignorar entorno virtual de Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+# Ignorar archivos de configuración de VSCode
+.vscode/
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db
+# Ignorar logs
+*.log
+# Ignorar archivos de Jupyter
+.ipynb_checkpoints/
+# Ignorar archivos de entorno
+.env
+.env.*
+# Ignorar dependencias de pip
+pip-wheel-metadata/
+# Ignorar archivos de test
+.coverage
+htmlcov/
+# Ignorar archivos de docker
+*.pid

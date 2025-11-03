@@ -347,7 +347,13 @@ docker build --platform=linux/amd64 -t demo-ml:local .
 
 # En lugar de: docker run --rm -v "$PWD:/app" demo-ml:local
 docker run --rm --platform=linux/amd64 -v "$PWD:/app" demo-ml:local
+
+# Si estás en Powershell
+
+$Env:MSYS_NO_PATHCONV=1; docker run --rm -v "${PWD}:/app" demo-ml:local
+
 ```
+
 
 
 **Salida esperada:**
