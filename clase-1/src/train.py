@@ -1,7 +1,7 @@
 """
 Entrenamiento básico de modelo con scikit-learn.
 Dataset: Iris
-Semilla fija para reproducibilidad. #######
+Semilla fija para reproducibilidad. ########
 """
 
 from sklearn.datasets import load_iris
