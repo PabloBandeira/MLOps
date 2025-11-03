@@ -51,10 +51,12 @@ Una vez tengas VS Code instalado, clonaremos el repositorio desde GitHub:
 # Navegar a donde quieras guardar el proyecto
 cd ~/Desktop
 
+mkdir MLops
+
+cd MLops
+
 # Clonar el repositorio
 git clone https://github.com/PabloBandeira/MLOps.git
-
-mkdir MLops
 
 # Entrar al directorio
 cd MLops/clase-1
