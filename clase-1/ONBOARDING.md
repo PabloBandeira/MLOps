@@ -54,6 +54,8 @@ cd ~/Desktop
 # Clonar el repositorio
 git clone https://github.com/PabloBandeira/MLOps.git
 
+mkdir MLops
+
 # Entrar al directorio
 cd MLops/clase-1
 ```
@@ -119,7 +121,7 @@ El profesor accede a GitHub y revisa:
 - Los cambios que hiciste
 - Tus resultados y experimentos
 
-**Tu código está visible para revisar sin necesidad de Pull Request.**
+**Tu código está visible para revisar.**
 
 ---
 
