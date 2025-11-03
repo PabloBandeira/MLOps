@@ -1,0 +1,44 @@
+name: CI - Clase 1
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./clase-1
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        cache-dependency-path: ./clase-1/requirements*.txt
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt -r requirements-dev.txt
+    
+    - name: Run pre-commit checks
+      run: |
+        pre-commit install
+        pre-commit run --all-files
+    
+    - name: Run tests
+      run: |
+        python -m pytest -v
+    
+    - name: Run training script
+      run: |
+        python src/train.py
+    
+    - name: Build Docker image
+      run: |
+        docker build -t demo-ml:ci .
