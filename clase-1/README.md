@@ -4,7 +4,7 @@ Práctica de MLOps con modelo básico de Machine Learning, integración continua
 
 ---
 
-## Requisitos
+### Requisitos
 
 - **Python 3.11**
 - **Docker Desktop** (Windows/Mac)
