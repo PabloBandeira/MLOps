@@ -17,11 +17,11 @@ def main():
 
     # Split con semilla fija
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=39758307
+        X, y, test_size=0.2, random_state=654321
     )
 
     # Entrenar modelo
-    model = RandomForestClassifier(n_estimators=100, random_state=39758307)
+    model = RandomForestClassifier(n_estimators=100, random_state=654321)
     model.fit(X_train, y_train)
 
     # Predicción y métricas
