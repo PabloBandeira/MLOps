@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
 
-def train_model(n_estimators=100, max_depth=None, random_state=42):
+def train_model(n_estimators=100, max_depth=None, random_state=26461180):
     """
     Entrena modelo con tracking de MLflow.
 
