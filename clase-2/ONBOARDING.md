@@ -103,6 +103,8 @@ python src/train_mlflow.py
 # Usar platform específica si hay problemas
 docker build --platform=linux/amd64 -t demo-ml:local .
 docker run --rm --platform=linux/amd64 -v "$PWD:/app" demo-ml:local
+
+
 ```
 
 ---
