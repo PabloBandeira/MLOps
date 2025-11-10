@@ -10,7 +10,7 @@ echo "MLflow Model Serving"
 echo "=========================================="
 
 # Obtener el último run ID
-LAST_RUN_ID=$(python -c "
+LAST_RUN_ID=$(python3.11 -c "
 import mlflow
 client = mlflow.tracking.MlflowClient()
 experiment = client.get_experiment_by_name('iris-classification')
