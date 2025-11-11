@@ -1,0 +1,71 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║              🎓 CLASE 2.2 - MLflow Full Docker Setup 🎓                    ║
+║                                                                              ║
+║        Full Docker: Entrenamientos + MLflow UI + Model Serving              ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+👋 ¡Bienvenido! Elige por donde empezar:
+
+┌─ OPCIÓN 1: RÁPIDA (5 minutos) ────────────────────────────────────────────┐
+│                                                                              │
+│  1. Asegúrate que Docker Desktop esté instalado y corriendo                 │
+│  2. Ejecuta:                                                                 │
+│                                                                              │
+│     bash scripts/quick-start.sh                                             │
+│                                                                              │
+│  3. Espera a que termine (verás "✅ Servicios iniciados")                  │
+│  4. Abre: http://localhost:5000 (MLflow UI)                                │
+│  5. En otra terminal, haz una predicción:                                   │
+│                                                                              │
+│     curl -X POST http://localhost:9000/invocations \                        │
+│       -H 'Content-Type: application/json' \                                 │
+│       -d '{"dataframe_split": {"columns": ["0", "1", "2", "3"],            │
+│            "data": [[7.7, 3.8, 6.7, 2.2]]}}'                               │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌─ OPCIÓN 2: PASO A PASO (15 minutos) ──────────────────────────────────────┐
+│                                                                              │
+│  1. Leer: SETUP.md (instalar Docker)                                        │
+│  2. Leer: ONBOARDING.md (paso a paso detallado)                             │
+│  3. Seguir instrucciones                                                    │
+│                                                                              │
+│  Tiempo: ~15 minutos                                                        │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌─ OPCIÓN 3: NAVEGACIÓN (con índice) ──────────────────────────────────────┐
+│                                                                              │
+│  Leer: INDEX.md                                                             │
+│  Encontrarás:                                                               │
+│  - Rutas de aprendizaje                                                     │
+│  - Estructura de archivos                                                   │
+│  - Comandos más usados                                                      │
+│  - Búsqueda rápida                                                          │
+│                                                                              │
+│  Tiempo: 5-10 minutos                                                       │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+🎯 OBJETIVOS:
+✅ Aprender Docker
+✅ Usar MLflow
+✅ Entrenar modelos en contenedor
+✅ Servir modelos via API
+✅ Hacer predicciones
+
+📚 DOCUMENTACIÓN:
+  • INDEX.md           - Guía de navegación
+  • SETUP.md           - Instalación de Docker
+  • ONBOARDING.md      - Paso a paso completo
+  • README.md          - Referencia técnica
+  • GUIA_DEL_INSTRUCTOR.md - Plan de clase (para instructores)
+
+⚡ ATAJO: Si ya tienes Docker:
+  
+  bash scripts/quick-start.sh
+
+🚀 ¡Vamos!
+

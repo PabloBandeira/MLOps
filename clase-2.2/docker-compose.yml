@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PLATFORM: linux/arm64/v8  # Cambiar a linux/amd64 para Intel
+    container_name: mlflow-clase22
+    ports:
+      - "5000:5000"  # MLflow UI
+      - "9000:9000"  # Model Serving
+    volumes:
+      - ./mlruns:/app/mlruns
+      - ./src:/app/src
+      - ./scripts:/app/scripts
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - mlflow-network
+
+networks:
+  mlflow-network:
+    driver: bridge
+
