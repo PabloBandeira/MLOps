@@ -40,11 +40,7 @@ from sklearn.metrics import (
 import mlflow
 import mlflow.sklearn
 from evidently.report import Report
-from evidently.metric_preset import (
-    ClassificationPreset,
-    DataDriftPreset,
-    DataQualityPreset,
-)
+from evidently.metric_preset import DataDriftPreset, ClassificationPreset
 
 warnings.filterwarnings("ignore")
 
@@ -251,7 +247,7 @@ def evaluate_model(model, X_test, y_test, feature_names):
     for idx, row in feature_importance.head().iterrows():
         logger.info(f"  - {row['feature']}: {row['importance']:.4f}")
 
-    logger.info()
+    logger.info("")
 
     return metrics, y_pred, y_pred_proba
 
@@ -379,37 +375,33 @@ def generate_evidently_reports(
         test_df["target"] = y_test
         test_df["prediction"] = y_pred
 
-        # --------- Reporte 1: Classification Metrics ---------
-        logger.info("\n✓ Generando reporte de métricas de clasificación...")
-        report1 = Report(metrics=[ClassificationPreset()])
-        report1.run(reference_data=train_df, current_data=test_df)
+        # --------- Reporte 1: Classification Performance ---------
+        logger.info("\n✓ Generando reporte de clasificación...")
+        try:
+            report1 = Report(metrics=[ClassificationPreset()])
+            report1.run(reference_data=train_df, current_data=test_df)
 
-        report1_path = os.path.join(
-            REPORTS_PATH, f"run_{run_id}_classification_report.html"
-        )
-        report1.save_html(report1_path)
-        reports_paths["classification"] = report1_path
-        logger.info(f"  - Guardado en: {report1_path}")
+            report1_path = os.path.join(
+                REPORTS_PATH, f"run_{run_id}_classification_report.html"
+            )
+            report1.save_html(report1_path)
+            reports_paths["classification"] = report1_path
+            logger.info(f"  - Guardado en: {report1_path}")
+        except Exception as e:
+            logger.warning(f"⚠ Error generando reporte de clasificación: {str(e)}")
 
         # --------- Reporte 2: Data Drift ---------
         logger.info("✓ Generando reporte de data drift...")
-        report2 = Report(metrics=[DataDriftPreset()])
-        report2.run(reference_data=train_df, current_data=test_df)
+        try:
+            report2 = Report(metrics=[DataDriftPreset()])
+            report2.run(reference_data=train_df, current_data=test_df)
 
-        report2_path = os.path.join(REPORTS_PATH, f"run_{run_id}_drift_report.html")
-        report2.save_html(report2_path)
-        reports_paths["drift"] = report2_path
-        logger.info(f"  - Guardado en: {report2_path}")
-
-        # --------- Reporte 3: Data Quality ---------
-        logger.info("✓ Generando reporte de calidad de datos...")
-        report3 = Report(metrics=[DataQualityPreset()])
-        report3.run(reference_data=train_df, current_data=test_df)
-
-        report3_path = os.path.join(REPORTS_PATH, f"run_{run_id}_quality_report.html")
-        report3.save_html(report3_path)
-        reports_paths["quality"] = report3_path
-        logger.info(f"  - Guardado en: {report3_path}")
+            report2_path = os.path.join(REPORTS_PATH, f"run_{run_id}_drift_report.html")
+            report2.save_html(report2_path)
+            reports_paths["drift"] = report2_path
+            logger.info(f"  - Guardado en: {report2_path}")
+        except Exception as e:
+            logger.warning(f"⚠ Error generando reporte de drift: {str(e)}")
 
         logger.info("\n✓ Reportes Evidently generados exitosamente")
 

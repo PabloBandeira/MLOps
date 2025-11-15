@@ -307,8 +307,12 @@ def generate_drift_report(X_train, df_scenario, scenario_name, run_id):
     df_train["target"] = 0  # Placeholder
 
     # Crear reporte
-    report = Report(metrics=[DataDriftPreset()])
-    report.run(reference_data=df_train, current_data=df_scenario)
+    try:
+        report = Report(metrics=[DataDriftPreset()])
+        report.run(reference_data=df_train, current_data=df_scenario)
+    except Exception as e:
+        logger.warning(f"⚠ Error generando reporte: {e}")
+        return None
 
     # Guardar
     report_name = scenario_name.lower().replace(" ", "_")

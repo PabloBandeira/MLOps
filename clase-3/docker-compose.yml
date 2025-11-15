@@ -13,10 +13,10 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MLFLOW_BACKEND_STORE_URI=sqlite:////mlflow_data/mlflow.db
-      - MLFLOW_DEFAULT_ARTIFACT_ROOT=/mlflow_data/artifacts
+      - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow_data/mlflow.db
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/mlflow_data/artifacts
     volumes:
-      - ./mlflow/mlflow_data:/mlflow_data
+      - ./mlflow/mlflow_data:/app/mlflow_data
     networks:
       - mlops-network
     healthcheck:
