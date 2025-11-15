@@ -56,6 +56,8 @@ services:
       context: ./monitoring
       dockerfile: Dockerfile
     container_name: monitoring-app
+    ports:
+      - "8888:8888"
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
       - EVIDENTLY_SERVICE_URL=http://evidently:8000
@@ -64,6 +66,7 @@ services:
       - ./data:/app/data
       - ./reports:/app/reports
       - ./monitoring:/app
+      - ./notebooks:/app/notebooks
     networks:
       - mlops-network
     depends_on:
