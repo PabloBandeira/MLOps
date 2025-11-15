@@ -7,12 +7,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Instalar MLflow y dependencias necesarias
+# Instalar MLflow y dependencias necesarias (últimas versiones)
 RUN pip install --no-cache-dir \
-    mlflow==2.12.1 \
-    numpy==1.24.3 \
-    pandas==2.0.3 \
-    scikit-learn==1.3.0
+    mlflow==3.6.0 \
+    numpy==1.26.4 \
+    pandas==2.2.0 \
+    scikit-learn==1.5.1
 
 # Crear directorio de datos
 RUN mkdir -p /mlflow_data/artifacts
