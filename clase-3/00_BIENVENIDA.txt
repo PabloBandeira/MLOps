@@ -1,0 +1,363 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                   BIENVENIDO A CLASE 3: MODEL MONITORING                    ║
+║                                                                              ║
+║              Evidently AI + MLflow - Detección de Drift en ML               ║
+║                                                                              ║
+║                     Maestría en Ciencia de Datos - MLOps                    ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+📚 SOBRE ESTA CLASE
+════════════════════════════════════════════════════════════════════════════════
+
+Esta es una clase práctica completa sobre Model Monitoring en Machine Learning.
+Aprenderás cómo:
+
+  1. Monitorear modelos en producción con Evidently AI
+  2. Detectar data drift (cambios en distribuciones)
+  3. Trackear experimentos con MLflow
+  4. Generar reportes automáticos
+  5. Orquestar múltiples servicios con Docker Compose
+  6. Prepararte para Kubernetes (Clase 4)
+
+
+🎯 QUICK START (3 PASOS)
+════════════════════════════════════════════════════════════════════════════════
+
+Paso 1: Lee esta introducción (estás aquí ✓)
+
+Paso 2: Abre COMIENZA_AQUI.txt
+        $ cat COMIENZA_AQUI.txt
+
+Paso 3: Sigue los 3 pasos para comenzar
+        $ docker-compose up -d
+        $ docker-compose exec monitoring python train_and_monitor.py
+        $ open http://localhost:5000
+
+
+📖 GUÍA DE LECTURA RECOMENDADA
+════════════════════════════════════════════════════════════════════════════════
+
+1. EMPIEZA CON:
+   👉 COMIENZA_AQUI.txt        (5 minutos - Quick start)
+
+2. LUEGO LEE:
+   👉 README.md                (20 minutos - Conceptos + setup)
+
+3. CUANDO TENGAS DUDAS:
+   👉 FAQ.md                   (Búsqueda rápida por tema)
+
+4. PARA REFERENCIA:
+   👉 INDEX.md                 (Índice completo del proyecto)
+
+5. SI USAS MACOS:
+   👉 SETUP_MACOS.md           (Tips específicos para tu OS)
+
+6. PARA ENTENDER ENTREGAS:
+   👉 ENTREGABLES.md           (Qué se incluye exactamente)
+
+
+🔑 ARCHIVOS CLAVE A REVISAR
+════════════════════════════════════════════════════════════════════════════════
+
+Código Principal:
+  ├── monitoring/train_and_monitor.py    (280 líneas - Workflow completo)
+  ├── monitoring/simulate_drift.py       (250 líneas - Simulación de drift)
+  └── docker-compose.yml                 (Orquestación de 3 servicios)
+
+Tutoriales:
+  ├── notebooks/01_basic_monitoring.ipynb    (Tutorial paso a paso)
+  └── notebooks/02_drift_simulation.ipynb    (Análisis avanzado)
+
+Documentación:
+  ├── README.md            (Guía completa)
+  ├── FAQ.md               (Preguntas frecuentes)
+  └── SETUP_MACOS.md       (Específico para macOS)
+
+
+🎓 OBJETIVOS DE APRENDIZAJE
+════════════════════════════════════════════════════════════════════════════════
+
+Después de esta clase serás capaz de:
+
+✅ Entender qué es Model Monitoring y por qué es crítico
+✅ Detectar data drift usando Evidently AI
+✅ Usar MLflow para tracking de experimentos
+✅ Generar reportes de calidad automáticos
+✅ Orquestar múltiples servicios con Docker Compose
+✅ Simular diferentes tipos de drift
+✅ Comparar experimentos y identificar degradación
+✅ Preparar código para Kubernetes
+
+
+🚀 FLUJO DE LA CLASE
+════════════════════════════════════════════════════════════════════════════════
+
+PARTE 1: CONCEPTOS (Teórico)
+  └─ Qué es Model Monitoring
+  └─ Tipos de drift: Covariate, Label, Feature
+  └─ MLflow y Evidently: herramientas clave
+  └─ Arquitectura: 3 servicios Docker
+
+PARTE 2: SETUP (Práctica)
+  └─ Levantar Docker Compose
+  └─ Verificar servicios
+  └─ Acceder a MLflow y Evidently
+
+PARTE 3: ENTRENAMIENTO (Ejecución)
+  └─ Entrenar modelo (RandomForest)
+  └─ Logging automático en MLflow
+  └─ Generación de reportes Evidently
+
+PARTE 4: SIMULACIÓN (Experimentos)
+  └─ Simular 4 tipos de drift
+  └─ Comparar impacto en métricas
+  └─ Análisis de degradación
+
+PARTE 5: EXPLORACIÓN (Investigación)
+  └─ MLflow UI: comparar runs
+  └─ Evidently Dashboard: ver drift
+  └─ Reportes HTML: análisis offline
+
+
+⏱️ TIEMPO ESTIMADO
+════════════════════════════════════════════════════════════════════════════════
+
+Setup inicial:              15-30 minutos
+Primer entrenamiento:       10-30 minutos
+Exploración de resultados:  20-30 minutos
+Simulación de drift:        20-40 minutos
+Análisis y experimentos:    30-60 minutos
+
+Total clase completa:       ~90-120 minutos
+
+
+💡 TIPS ANTES DE COMENZAR
+════════════════════════════════════════════════════════════════════════════════
+
+1. AMBIENTE
+   - Asegurate que Docker Desktop está corriendo
+   - Tienes ~4GB RAM disponible
+   - Puertos 5000 y 8000 están libres
+
+2. ARCHIVOS
+   - TODO lo que necesitas está aquí (no hay descargas)
+   - Dataset sintético ya incluido
+   - Todos los Dockerfiles listos
+
+3. DOCUMENTACIÓN
+   - Está TODO documentado
+   - Lee los comentarios en el código
+   - COMIENZA_AQUI.txt es tu referencia rápida
+
+4. ERRORES
+   - Si algo falla, consulta FAQ.md
+   - Ve los logs: docker-compose logs -f
+   - Casi siempre es por puertos o espacio
+
+5. PREGUNTAS
+   - FAQ.md probablemente tiene tu respuesta
+   - Los comentarios en código son educativos
+   - README.md tiene troubleshooting
+
+
+🔄 ESTRUCTURA RECOMENDADA
+════════════════════════════════════════════════════════════════════════════════
+
+Día 1: FUNDAMENTOS
+  1. Lee COMIENZA_AQUI.txt
+  2. Lee secciones 1-3 de README.md
+  3. Ejecuta setup inicial
+  4. Primer training
+
+Día 2: EXPLORACIÓN
+  1. Lee secciones 4-5 de README.md
+  2. Explora MLflow y Evidently UIs
+  3. Ejecuta notebooks/01_basic_monitoring.ipynb
+  4. Compara 2-3 runs en MLflow
+
+Día 3: AVANZADO
+  1. Lee sección 6 de README.md (conceptos)
+  2. Ejecuta simulate_drift.py
+  3. Ejecuta notebooks/02_drift_simulation.ipynb
+  4. Analiza tipos de drift
+
+
+🎯 EJERCICIOS PRINCIPALES
+════════════════════════════════════════════════════════════════════════════════
+
+Ejercicio 1: Entrenar y Explorar
+  → python train_and_monitor.py
+  → Explora reportes HTML
+  → Visualiza en MLflow
+
+Ejercicio 2: Comparación de Modelos
+  → Ejecutar 3 veces con diferentes parámetros
+  → Usar MLflow Compare para visualizar
+  → Identificar mejor configuración
+
+Ejercicio 3: Simulación de Drift
+  → python simulate_drift.py
+  → Analizar 4 escenarios
+  → Identificar el más crítico
+
+Ejercicio 4: Personalización
+  → Cambiar modelo (XGBoost)
+  → Agregar dataset real
+  → Crear métrica personalizada
+
+
+🛠️ RECURSOS EN ESTE DIRECTORIO
+════════════════════════════════════════════════════════════════════════════════
+
+Contenido:
+  ├── 📄 Documentación (6 archivos .md y .txt)
+  ├── 🐳 Docker configuration (3 Dockerfiles + docker-compose.yml)
+  ├── 🐍 Python scripts (4 archivos .py con 1,080+ líneas)
+  ├── 📊 Jupyter notebooks (2 notebooks con 27 celdas)
+  ├── 📁 Volúmenes (persistencia para MLflow + Evidently)
+  └── 📁 Dataset (1,000 muestras sintéticas)
+
+
+✨ CARACTERÍSTICAS INCLUIDAS
+════════════════════════════════════════════════════════════════════════════════
+
+✅ MLflow Server (puerto 5000)
+   - Backend SQLite
+   - UI para explorar experimentos
+   - Artifact storage
+
+✅ Evidently Service (puerto 8000)
+   - Dashboard web
+   - Detección de drift automática
+   - Reportes interactivos
+
+✅ Monitoring Scripts
+   - Training completo + evaluation
+   - Simulación realista de drift
+   - Logging automático
+
+✅ Notebooks Interactivos
+   - Tutorial paso a paso
+   - Análisis avanzado
+   - Ejecutables en Jupyter
+
+✅ Documentación Exhaustiva
+   - 5,200+ líneas totales
+   - Conceptos explicados
+   - Troubleshooting incluido
+
+
+❓ PREGUNTAS COMUNES
+════════════════════════════════════════════════════════════════════════════════
+
+P: ¿Qué necesito instalar?
+R: Solo Docker Desktop. Nada más.
+
+P: ¿De dónde viene el dataset?
+R: Generado sintéticamente. Está incluido.
+
+P: ¿Cuánto tarda el primer setup?
+R: ~30-60 segundos para iniciar servicios.
+
+P: ¿Puedo cambiar el modelo?
+R: Sí, edit train_and_monitor.py línea ~130
+
+P: ¿Qué pasa si algo falla?
+R: Consulta FAQ.md → Probablemente encontrarás la respuesta
+
+P: ¿Esto funciona en Windows?
+R: Sí, Docker Compose funciona en todos los OS.
+
+P: ¿Hay videos o tutoriales?
+R: Los notebooks Jupyter son tutoriales ejecutables.
+
+
+🎬 COMANDOS PARA COPIAR/PEGAR
+════════════════════════════════════════════════════════════════════════════════
+
+# Navegar
+cd /Users/pablo/Desktop/MLops/clase-3
+
+# Iniciar
+docker-compose up -d
+
+# Entrenar
+docker-compose exec monitoring python train_and_monitor.py
+
+# Simular drift
+docker-compose exec monitoring python simulate_drift.py
+
+# Ver logs
+docker-compose logs -f monitoring
+
+# Detener
+docker-compose down
+
+# Limpiar (⚠️ elimina datos)
+docker-compose down -v
+
+
+🌐 ACCESO A INTERFACES
+════════════════════════════════════════════════════════════════════════════════
+
+MLflow UI:
+  http://localhost:5000
+  → Busca experimento "Model Monitoring - Clase 3"
+  → Compara runs y métricas
+
+Evidently Dashboard:
+  http://localhost:8000
+  → Visualiza proyectos
+  → Análisis interactivo de drift
+
+Reportes HTML:
+  ./reports/run_*.html
+  → Abre en navegador
+  → Análisis offline
+
+
+🚀 PRÓXIMO NIVEL
+════════════════════════════════════════════════════════════════════════════════
+
+Después de dominar Clase 3, estará preparado para:
+
+CLASE 4: Kubernetes & Escalabilidad
+  ├─ Migración a Kubernetes
+  ├─ PostgreSQL backend
+  ├─ Multi-replica deployments
+  ├─ Ingress controllers
+  ├─ CI/CD automático
+  └─ Monitoreo en producción
+
+
+📞 NECESITAS AYUDA?
+════════════════════════════════════════════════════════════════════════════════
+
+1. Primero → FAQ.md (búsqueda por palabra clave)
+2. Luego → README.md (lee secciones relevantes)
+3. Logs → docker-compose logs -f
+4. Shell → docker-compose exec monitoring bash
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+¡BIENVENIDO A CLASE 3! 🎉
+
+Estás a punto de aprender uno de los aspectos más críticos de MLOps:
+mantener tus modelos saludables en producción.
+
+Comienza aquí:
+  $ cat COMIENZA_AQUI.txt
+
+O directamente:
+  $ cd /Users/pablo/Desktop/MLops/clase-3
+  $ docker-compose up -d
+  $ docker-compose exec monitoring python train_and_monitor.py
+  $ open http://localhost:5000
+
+¡Buena suerte! 🚀
+
+════════════════════════════════════════════════════════════════════════════════
