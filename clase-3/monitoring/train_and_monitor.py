@@ -345,12 +345,13 @@ def log_to_mlflow(
 # PASO 7: GENERAR REPORTES EVIDENTLY
 # =============================
 def generate_evidently_reports(
-    X_train, X_test, y_train, y_test, y_pred, feature_names, run_id
+    model, X_train, X_test, y_train, y_test, y_pred, feature_names, run_id
 ):
     """
     Genera reportes HTML con Evidently AI.
 
     Args:
+        model: Modelo entrenado
         X_train, X_test (np.array): Features
         y_train, y_test (np.array): Targets
         y_pred (np.array): Predicciones
@@ -367,9 +368,10 @@ def generate_evidently_reports(
     reports_paths = {}
 
     try:
-        # Preparar datos con predicciones
+        # Preparar datos con predicciones (ambos DataFrames con mismas columnas)
         train_df = pd.DataFrame(X_train, columns=feature_names)
         train_df["target"] = y_train
+        train_df["prediction"] = model.predict(X_train)
 
         test_df = pd.DataFrame(X_test, columns=feature_names)
         test_df["target"] = y_test
@@ -565,7 +567,7 @@ def main():
 
         # PASO 7: Generar reportes Evidently
         reports_paths = generate_evidently_reports(
-            X_train, X_test, y_train, y_test, y_pred, feature_names, run_id
+            model, X_train, X_test, y_train, y_test, y_pred, feature_names, run_id
         )
 
         # PASO 8: Enviar a Evidently Service

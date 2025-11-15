@@ -1,0 +1,116 @@
+# =============================
+# EXPERIMENTOS Y DATOS GENERADOS
+# =============================
+
+# MLflow: experimentos, runs, artifacts
+mlruns/
+mlflow/mlflow_data/*.db
+mlflow/mlflow_data/artifacts/
+
+# Evidently: workspace y reportes generados
+evidently-service/workspace/
+
+# Reportes HTML generados
+reports/*.html
+reports/*.htm
+!reports/.gitkeep
+
+# Dataset generado
+data/dataset.csv
+!data/.gitkeep
+
+
+# =============================
+# ARCHIVOS DE PYTHON
+# =============================
+
+# Cache de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Entorno virtual
+venv/
+env/
+ENV/
+.venv
+
+# IPython
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Conda
+environment.yml
+
+
+# =============================
+# EDITORES Y SISTEMA
+# =============================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+
+# Linux
+.swp
+*~
+
+# Windows
+Thumbs.db
+*.lnk
+
+
+# =============================
+# ARCHIVOS SENSIBLES
+# =============================
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# Credenciales
+credentials.json
+secrets.json
+
+# Logs
+*.log
+logs/
+
+
+# =============================
+# ARCHIVOS TEMPORALES
+# =============================
+
+# Temporal
+tmp/
+temp/
+*.tmp
+
+# macOS
+._*
+
+# Linux
+.~*
+

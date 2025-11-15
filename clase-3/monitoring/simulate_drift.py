@@ -284,11 +284,12 @@ def generate_feature_drift_data(X_test, y_test, feature_names, n_samples=100):
 # =============================
 # GENERAR REPORTES EVIDENTLY
 # =============================
-def generate_drift_report(X_train, df_scenario, scenario_name, run_id):
+def generate_drift_report(model, X_train, df_scenario, scenario_name, run_id):
     """
     Genera reporte Evidently comparando training data vs scenario.
 
     Args:
+        model: Modelo entrenado para generar predicciones
         X_train (np.array): Datos de referencia (training)
         df_scenario (pd.DataFrame): Datos del escenario
         scenario_name (str): Nombre del escenario
@@ -305,6 +306,7 @@ def generate_drift_report(X_train, df_scenario, scenario_name, run_id):
     ]
     df_train = pd.DataFrame(X_train, columns=feature_names)
     df_train["target"] = 0  # Placeholder
+    df_train["prediction"] = model.predict(X_train)  # Agregar predicciones
 
     # Crear reporte
     try:
@@ -419,7 +421,7 @@ def main():
     y_pred_baseline = model.predict(X_baseline)
 
     report1 = generate_drift_report(
-        X_train, df_baseline, "Scenario 1: Sin Drift", run_id
+        model, X_train, df_baseline, "Scenario 1: Sin Drift", run_id
     )
     log_scenario_to_mlflow(
         "Scenario 1: Sin Drift",
@@ -443,7 +445,7 @@ def main():
     y_pred_covariate = model.predict(X_covariate)
 
     report2 = generate_drift_report(
-        X_train, df_covariate, "Scenario 2: Covariate Shift", run_id
+        model, X_train, df_covariate, "Scenario 2: Covariate Shift", run_id
     )
     log_scenario_to_mlflow(
         "Scenario 2: Covariate Shift",
@@ -467,7 +469,7 @@ def main():
     y_pred_label = model.predict(X_label)
 
     report3 = generate_drift_report(
-        X_train, df_label, "Scenario 3: Label Shift", run_id
+        model, X_train, df_label, "Scenario 3: Label Shift", run_id
     )
     log_scenario_to_mlflow(
         "Scenario 3: Label Shift",
@@ -491,7 +493,7 @@ def main():
     y_pred_feature = model.predict(X_feature)
 
     report4 = generate_drift_report(
-        X_train, df_feature, "Scenario 4: Feature Drift", run_id
+        model, X_train, df_feature, "Scenario 4: Feature Drift", run_id
     )
     log_scenario_to_mlflow(
         "Scenario 4: Feature Drift",
