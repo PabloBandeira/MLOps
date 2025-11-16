@@ -1,4 +1,4 @@
-# Onboarding - Clase 2.2
+.ve# Onboarding - Clase 2.2
 
 **Full Docker MLflow: Entrenamiento + UI + Serving Todo en Uno**
 
@@ -46,8 +46,11 @@ docker --version
 # Navegar a la carpeta del proyecto
 cd /c/Users/<tu-usuario>/Desktop/MLops/clase-2.2
 
-# Crear y activar venv
-py -3.11 -m venv .venv || python -m venv .venv
+# Crear y activar venv con Python 3.11.9
+# Si tienes pyenv instalado, ejecuta:
+pyenv which python
+# Copia la ruta que te da el comando anterior (debe ser la de Python 3.11.9) y ejecuta:
+C:\Users\Usuario\.pyenv\pyenv-win\versions\3.11.9\python.exe -m venv .venv
 source .venv/Scripts/activate
 
 # Verificar activación (debe mostrar ruta a .venv)

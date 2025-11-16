@@ -21,7 +21,7 @@ def main():
     )
 
     # Entrenar modelo
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model = RandomForestClassifier(n_estimators=100, random_state=27087419)
     model.fit(X_train, y_train)
 
     # Predicción y métricas
