@@ -1,0 +1,15 @@
+artifact_uri: file:///app/mlruns/599192420937479490/5ac18d13873446d1823cd76f94ef2cbe/artifacts
+end_time: 1762817207178
+entry_point_name: ''
+experiment_id: '599192420937479490'
+lifecycle_stage: active
+run_id: 5ac18d13873446d1823cd76f94ef2cbe
+run_name: powerful-sloth-786
+run_uuid: 5ac18d13873446d1823cd76f94ef2cbe
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762817203530
+status: 3
+tags: []
+user_id: root

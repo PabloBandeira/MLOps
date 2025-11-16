@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1762817201008
+current_stage: None
+description: null
+last_updated_timestamp: 1762817201008
+name: iris-rf-classifier
+run_id: 14702c47b1c843228e6bc60c4c5b8386
+run_link: null
+source: file:///app/mlruns/599192420937479490/14702c47b1c843228e6bc60c4c5b8386/artifacts/model
+status: READY
+status_message: null
+storage_location: file:///app/mlruns/599192420937479490/14702c47b1c843228e6bc60c4c5b8386/artifacts/model
+user_id: null
+version: 1
