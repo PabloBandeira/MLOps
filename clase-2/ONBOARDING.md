@@ -46,7 +46,10 @@ pip install --upgrade pip
 pip install -r requirements.txt -r requirements-dev.txt
 
 # Configurar pre-commit
-pre-commit install
+# pre-commit install
+
+mlflow ui --port 5000
+
 
 # Verificar instalación
 pytest -q
@@ -103,6 +106,8 @@ python src/train_mlflow.py
 # Usar platform específica si hay problemas
 docker build --platform=linux/amd64 -t demo-ml:local .
 docker run --rm --platform=linux/amd64 -v "$PWD:/app" demo-ml:local
+
+
 ```
 
 ---
@@ -318,10 +323,30 @@ curl -X POST http://127.0.0.1:9000/invocations \
   -d '{"dataframe_split": {"columns": ["0", "1", "2", "3"], "data": [[5.1, 3.5, 1.4, 0.2]]}}'
 ```
 
+```bash
+curl -X POST http://127.0.0.1:9000/invocations \
+  -H 'Content-Type: application/json' \
+  -d '{"dataframe_split": {"columns": ["0", "1", "2", "3"], "data": [[6.0, 2.7, 5.1, 1.6]]}}'
+```
+
+```bash
+curl -X POST http://127.0.0.1:9000/invocations \
+  -H 'Content-Type: application/json' \
+  -d '{"dataframe_split": {"columns": ["0", "1", "2", "3"], "data": [[7.7, 3.8, 6.7, 2.2]]}}'
+```
+
 **Salida esperada:**
 
 ```json
 {"predictions": [0]}
+```
+
+```json
+{"predictions": [1]}
+```
+
+```json
+{"predictions": [2]}
 ```
 
 ---

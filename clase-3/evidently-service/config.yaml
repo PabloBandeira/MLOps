@@ -1,0 +1,89 @@
+# =============================
+# CONFIGURACIÓN DE EVIDENTLY SERVICE
+# =============================
+# Este archivo configura el servicio web de Evidently para monitoreo
+# de modelos en producción con detección de drift.
+
+# Configuración de proyectos de monitoreo
+projects:
+  # Proyecto por defecto para Clase 3
+  - name: "clase-3-monitoring"
+    description: "Proyecto de monitoreo para Clase 3 - MLOps"
+    
+    # Métricas a trackear
+    metrics:
+      - name: "data_drift"
+        type: "data_drift"
+        description: "Detección de cambios en distribución de datos"
+        
+      - name: "data_quality"
+        type: "data_quality"
+        description: "Métricas de calidad de datos"
+        
+      - name: "classification_metrics"
+        type: "classification_performance"
+        description: "Métricas de performance del modelo"
+
+# Configuración de snapshots (puntos en el tiempo)
+snapshots:
+  # Snapshot inicial con datos de referencia
+  - name: "reference_snapshot"
+    description: "Datos de referencia (training set)"
+    frequency: "once"
+
+# Configuración de alertas y umbrales
+alerts:
+  # Alerta por data drift significativo
+  - metric: "data_drift"
+    threshold: 0.5
+    severity: "high"
+    description: "Drift significativo detectado"
+
+  # Alerta por degradación de performance
+  - metric: "accuracy"
+    threshold: 0.8
+    severity: "medium"
+    description: "Degradación de accuracy"
+
+# Configuración de persistencia
+persistence:
+  workspace_dir: "/app/workspace"
+  backup_dir: "/app/workspace/backups"
+  auto_backup: true
+  backup_interval: "daily"
+
+# Configuración del servidor web
+server:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  cors_allowed_origins:
+    - "http://localhost:5000"
+    - "http://mlflow:5000"
+    - "http://localhost:3000"
+
+# Configuración de logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "/app/workspace/evidently.log"
+
+# Configuración de features a monitorear
+features:
+  numerical:
+    - feature_0
+    - feature_1
+    - feature_2
+    - feature_3
+    - feature_4
+    - feature_5
+    - feature_6
+    - feature_7
+    - feature_8
+    - feature_9
+  
+  categorical: []
+  
+  target: "target"
+  prediction: "prediction"
+
