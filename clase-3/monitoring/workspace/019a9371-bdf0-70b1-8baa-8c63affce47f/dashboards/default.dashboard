@@ -1,0 +1,89 @@
+{
+  "id": "default",
+  "title": "Model Monitoring",
+  "description": "Dashboard de monitoreo del modelo",
+  "version": "1.0",
+  "layout": {
+    "type": "grid",
+    "columns": 12
+  },
+  "tabs": [
+    {
+      "id": "performance",
+      "title": "Model Performance",
+      "panels": [
+        {
+          "id": "accuracy_panel",
+          "title": "Accuracy",
+          "description": "Model accuracy over time",
+          "type": "line_chart",
+          "size": {
+            "width": 6,
+            "height": 4
+          },
+          "metric": {
+            "name": "Accuracy"
+          }
+        },
+        {
+          "id": "precision_panel",
+          "title": "Precision",
+          "description": "Model precision over time",
+          "type": "line_chart",
+          "size": {
+            "width": 6,
+            "height": 4
+          },
+          "metric": {
+            "name": "Precision"
+          }
+        },
+        {
+          "id": "recall_panel",
+          "title": "Recall",
+          "description": "Model recall over time",
+          "type": "line_chart",
+          "size": {
+            "width": 6,
+            "height": 4
+          },
+          "metric": {
+            "name": "Recall"
+          }
+        },
+        {
+          "id": "f1_panel",
+          "title": "F1 Score",
+          "description": "F1 score over time",
+          "type": "line_chart",
+          "size": {
+            "width": 6,
+            "height": 4
+          },
+          "metric": {
+            "name": "F1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "drift",
+      "title": "Data Drift",
+      "panels": [
+        {
+          "id": "drift_panel",
+          "title": "Dataset Drift",
+          "description": "Overall data drift",
+          "type": "line_chart",
+          "size": {
+            "width": 12,
+            "height": 4
+          },
+          "metric": {
+            "name": "DatasetDriftMetric"
+          }
+        }
+      ]
+    }
+  ]
+}

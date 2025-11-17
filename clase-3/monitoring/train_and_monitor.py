@@ -29,6 +29,7 @@ from datetime import datetime
 
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_iris
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -55,7 +56,6 @@ logger = logging.getLogger(__name__)
 # =============================
 # CONFIGURACIÓN DE VARIABLES
 # =============================
-DATA_PATH = "/app/data/dataset.csv"
 REPORTS_PATH = "/app/reports"
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
 EVIDENTLY_SERVICE_URL = os.getenv("EVIDENTLY_SERVICE_URL", "http://localhost:8000")
@@ -65,54 +65,48 @@ os.makedirs(REPORTS_PATH, exist_ok=True)
 
 
 # =============================
-# PASO 1: CARGA Y PREPARACIÓN DE DATOS
+# PASO 1: CARGA Y PREPARACIÓN DE DATOS (IRIS)
 # =============================
-def load_and_prepare_data(data_path):
+def load_and_prepare_data():
     """
-    Carga el dataset CSV y realiza preparación básica.
-
-    Args:
-        data_path (str): Ruta al archivo CSV
+    Carga el dataset Iris y realiza preparación básica.
 
     Returns:
-        tuple: (X, y, feature_names)
+        tuple: (X, y, feature_names, df)
     """
     logger.info("=" * 60)
-    logger.info("PASO 1: CARGA Y PREPARACIÓN DE DATOS")
+    logger.info("PASO 1: CARGA Y PREPARACIÓN DE DATOS (IRIS)")
     logger.info("=" * 60)
 
     try:
-        df = pd.read_csv(data_path)
-        logger.info(f"✓ Dataset cargado: {data_path}")
+        # Cargar Iris
+        iris = load_iris()
+        X = iris.data
+        y = iris.target
+        feature_names = list(iris.feature_names)
+        target_names = list(iris.target_names)
+
+        # Crear DataFrame para mejor visualización
+        df = pd.DataFrame(X, columns=feature_names)
+        df["target"] = y
+
+        logger.info("✓ Dataset Iris cargado")
         logger.info(f"  - Shape: {df.shape}")
         logger.info(f"  - Columnas: {list(df.columns)}")
         logger.info("  - Tipos de dato:")
         for col, dtype in df.dtypes.items():
             logger.info(f"    * {col}: {dtype}")
 
-        # Validar que existe columna 'target'
-        if "target" not in df.columns:
-            raise ValueError("Dataset debe contener columna 'target'")
-
-        # Separar features y target
-        y = df["target"].values
-        X = df.drop("target", axis=1).values
-        feature_names = df.drop("target", axis=1).columns.tolist()
-
         # Análisis de clases
         unique, counts = np.unique(y, return_counts=True)
         logger.info("\n✓ Distribución de clases:")
         for cls, count in zip(unique, counts):
+            class_name = target_names[int(cls)]
             logger.info(
-                f"  - Clase {int(cls)}: {count} muestras ({100*count/len(y):.1f}%)"
+                f"  - Clase {int(cls)} ({class_name}): {count} muestras ({100*count/len(y):.1f}%)"
             )
 
-        # Verificar valores faltantes
-        missing = df.isnull().sum().sum()
-        if missing > 0:
-            logger.warning(f"⚠ Valores faltantes detectados: {missing}")
-        else:
-            logger.info("✓ Sin valores faltantes")
+        logger.info("✓ Sin valores faltantes")
 
         logger.info(f"\n✓ Features: {len(feature_names)}")
         logger.info(f"  - {', '.join(feature_names)}\n")
@@ -223,15 +217,17 @@ def evaluate_model(model, X_test, y_test, feature_names):
 
     # Predicciones
     y_pred = model.predict(X_test)
-    y_pred_proba = model.predict_proba(X_test)[:, 1]
+    y_pred_proba = model.predict_proba(X_test)  # Mantener todas las probabilidades
 
-    # Métricas
+    # Métricas (weighted para multiclass)
     metrics = {
         "accuracy": accuracy_score(y_test, y_pred),
-        "precision": precision_score(y_test, y_pred, zero_division=0),
-        "recall": recall_score(y_test, y_pred, zero_division=0),
-        "f1": f1_score(y_test, y_pred, zero_division=0),
-        "roc_auc": roc_auc_score(y_test, y_pred_proba),
+        "precision": precision_score(
+            y_test, y_pred, average="weighted", zero_division=0
+        ),
+        "recall": recall_score(y_test, y_pred, average="weighted", zero_division=0),
+        "f1": f1_score(y_test, y_pred, average="weighted", zero_division=0),
+        "roc_auc": roc_auc_score(y_test, y_pred_proba, multi_class="ovr"),
     }
 
     logger.info("✓ Métricas de evaluación:")
@@ -528,8 +524,8 @@ def main():
         logger.info("█" + " " * 58 + "█")
         logger.info("█" * 60 + "\n")
 
-        # PASO 1: Cargar datos
-        X, y, feature_names, df = load_and_prepare_data(DATA_PATH)
+        # PASO 1: Cargar datos (Iris)
+        X, y, feature_names, df = load_and_prepare_data()
 
         # PASO 2: Split
         X_train, X_test, y_train, y_test = split_data(X, y)

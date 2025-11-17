@@ -109,6 +109,8 @@ Jupyter Notebooks incluidos:
 
 Para ejecutar:
   $ docker-compose exec monitoring jupyter notebook --ip=0.0.0.0
+  # Si te tira error:
+  $ docker-compose exec monitoring jupyter notebook --ip=0.0.0.0 --allow-root
 
 (O ejecutar celdas manualmente en tu IDE favorito)
 
