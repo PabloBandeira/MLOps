@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "title": "Model Monitoring Dashboard",
+  "description": "Monitoreo autom\u00e1tico del modelo",
+  "panels": [
+    {
+      "id": "accuracy_panel",
+      "title": "Model Accuracy",
+      "type": "counter",
+      "size": [
+        4,
+        2
+      ],
+      "metric": {
+        "type": "accuracy",
+        "input": "current"
+      }
+    },
+    {
+      "id": "precision_panel",
+      "title": "Model Precision",
+      "type": "counter",
+      "size": [
+        4,
+        2
+      ],
+      "metric": {
+        "type": "precision",
+        "input": "current"
+      }
+    },
+    {
+      "id": "drift_panel",
+      "title": "Data Drift",
+      "type": "big_graph",
+      "size": [
+        4,
+        4
+      ],
+      "metric": {
+        "type": "dataset_drift",
+        "input": "current"
+      }
+    }
+  ]
+}

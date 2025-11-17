@@ -26,6 +26,7 @@ import warnings
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_iris
 from sklearn.metrics import accuracy_score, f1_score
 
 import mlflow
@@ -46,7 +47,6 @@ logger = logging.getLogger(__name__)
 # =============================
 # CONFIGURACIÓN DE VARIABLES
 # =============================
-DATA_PATH = "/app/data/dataset.csv"
 REPORTS_PATH = "/app/reports"
 MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
 
@@ -54,30 +54,27 @@ os.makedirs(REPORTS_PATH, exist_ok=True)
 
 
 # =============================
-# CARGAR DATOS BASE
+# CARGAR DATOS BASE (IRIS)
 # =============================
-def load_reference_data(data_path):
+def load_reference_data():
     """
-    Carga el dataset de referencia (datos de entrenamiento).
-
-    Args:
-        data_path (str): Ruta al CSV
+    Carga el dataset Iris como datos de referencia.
 
     Returns:
         tuple: (X_train, X_test, y_train, y_test, feature_names)
     """
-    logger.info("Cargando datos de referencia...")
+    logger.info("Cargando dataset Iris...")
 
-    df = pd.read_csv(data_path)
-    y = df["target"].values
-    X = df.drop("target", axis=1).values
-    feature_names = df.drop("target", axis=1).columns.tolist()
+    iris = load_iris()
+    X = iris.data
+    y = iris.target
+    feature_names = list(iris.feature_names)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, stratify=y, random_state=42
     )
 
-    logger.info(f"✓ Datos cargados: {X_train.shape}")
+    logger.info(f"✓ Dataset Iris cargado: {X_train.shape}")
     logger.info(f"✓ Features: {len(feature_names)}\n")
 
     return X_train, X_test, y_train, y_test, feature_names
@@ -367,10 +364,10 @@ def log_scenario_to_mlflow(
         mlflow.log_param("drift_severity", drift_severity)
         mlflow.log_param("n_samples", len(X_test))
 
-        # Log métricas
+        # Log métricas (weighted para multiclass)
         y_pred_labels = y_pred.round().astype(int)
         accuracy = accuracy_score(y_test, y_pred_labels)
-        f1 = f1_score(y_test, y_pred_labels, zero_division=0)
+        f1 = f1_score(y_test, y_pred_labels, average="weighted", zero_division=0)
 
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("f1_score", f1)
@@ -398,8 +395,8 @@ def main():
     logger.info("█" + " " * 58 + "█")
     logger.info("█" * 60 + "\n")
 
-    # Cargar datos base
-    X_train, X_test, y_train, y_test, feature_names = load_reference_data(DATA_PATH)
+    # Cargar datos base (Iris)
+    X_train, X_test, y_train, y_test, feature_names = load_reference_data()
     logger.info(f"{'=' * 60}\n")
 
     # Entrenar modelo base para predicciones
