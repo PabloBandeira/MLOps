@@ -1,0 +1,88 @@
+services:
+  # ====================
+  # SERVICIO 1: MLflow
+  # ====================
+  # Propósito: Backend de tracking para modelos y experimentos
+  # Puerto: 5000 (UI + API)
+  # Storage: SQLite en /mlflow_data/ (volumen persistente)
+  mlflow:
+    build:
+      context: ./mlflow
+      dockerfile: Dockerfile
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow_data/mlflow.db
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=/app/mlflow_data/artifacts
+    volumes:
+      - ./mlflow/mlflow_data:/app/mlflow_data
+    networks:
+      - mlops-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ==========================
+  # SERVICIO 2: Evidently Service
+  # ==========================
+  # Propósito: Monitoreo y detección de drift con UI web
+  # Puerto: 8000 (API + Dashboard)
+  # Storage: workspace/ (volumen persistente)
+  evidently:
+    image: evidently/evidently-service:latest
+    container_name: evidently-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./evidently-service/workspace:/app/workspace
+      - ./evidently-service/config.yaml:/app/config.yaml
+    environment:
+      - WORKSPACE=/app/workspace
+    networks:
+      - mlops-network
+
+  # =============================
+  # SERVICIO 3: Monitoring Scripts
+  # =============================
+  # Propósito: Ejecutar scripts de entrenamiento y monitoreo
+  # Modo: Modo desarrollo (tail -f /dev/null permite ejecutar comandos)
+  # Red: Comunica con MLflow y Evidently por nombres de servicio
+  monitoring:
+    build:
+      context: ./monitoring
+      dockerfile: Dockerfile
+    container_name: monitoring-app
+    ports:
+      - "8888:8888"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - EVIDENTLY_SERVICE_URL=http://evidently:8000
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./monitoring:/app
+      - ./notebooks:/app/notebooks
+    networks:
+      - mlops-network
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    # Modo desarrollo: mantener contenedor activo para ejecutar comandos
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+
+# ====================
+# NETWORK COMPARTIDA
+# ====================
+# Permite que los contenedores se comuniquen por nombres de servicio
+# Ejemplo: mlflow:5000, evidently:8000
+networks:
+  mlops-network:
+    driver: bridge
+
