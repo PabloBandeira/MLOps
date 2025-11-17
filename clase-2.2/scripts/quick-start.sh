@@ -72,5 +72,5 @@ echo ""
 echo "⏹️  Para detener: Presiona Ctrl+C"
 echo ""
 
-docker run $PLATFORM -p 5000:5000 -p 9000:9000 --rm demo-ml-clase22:local
+docker run $PLATFORM -p 5001:5000 -p 9000:9000 --rm demo-ml-clase22:local
 
