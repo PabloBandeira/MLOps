@@ -162,6 +162,7 @@ monitoring-app        running
 ### 3. Acceder a Interfaces Web
 
 - **MLflow UI**: http://localhost:5000
+http://localhost:8050
 - **Evidently Dashboard**: http://localhost:8000
 
 ### 4. Ejecutar Entrenamiento Base

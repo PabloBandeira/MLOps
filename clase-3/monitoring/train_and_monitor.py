@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 # CONFIGURACIÓN DE VARIABLES
 # =============================
 REPORTS_PATH = "/app/reports"
-MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:8000")
 EVIDENTLY_SERVICE_URL = os.getenv("EVIDENTLY_SERVICE_URL", "http://localhost:8000")
 
 # Crear directorio de reportes si no existe
@@ -121,7 +121,7 @@ def load_and_prepare_data():
 # =============================
 # PASO 2: TRAIN/TEST SPLIT
 # =============================
-def split_data(X, y, test_size=0.2, random_state=39758307):
+def split_data(X, y, test_size=0.2, random_state=39644481):
     """
     Divide datos en train y test de forma estratificada.
 
@@ -173,7 +173,7 @@ def train_model(X_train, y_train, hyperparams=None):
             "max_depth": 10,
             "min_samples_split": 5,
             "min_samples_leaf": 2,
-            "random_state": 39758307,
+            "random_state": 39644481,
             "n_jobs": -1,
         }
 
@@ -536,7 +536,7 @@ def main():
             "max_depth": 10,
             "min_samples_split": 5,
             "min_samples_leaf": 2,
-            "random_state": 39758307,
+            "random_state": 39644481,
             "n_jobs": -1,
         }
         model, cv_scores = train_model(X_train, y_train, hyperparams)
