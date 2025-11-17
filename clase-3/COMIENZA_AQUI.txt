@@ -19,7 +19,7 @@ PASO 2: Entrena el modelo
 $ docker-compose exec monitoring python train_and_monitor.py
 
   Esto hará:
-  ✓ Cargará dataset.csv
+  ✓ Cargará dataset iris
   ✓ Entrenará RandomForest
   ✓ Registrará en MLflow
   ✓ Generará reportes Evidently

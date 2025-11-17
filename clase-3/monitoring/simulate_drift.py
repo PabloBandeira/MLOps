@@ -71,7 +71,7 @@ def load_reference_data():
     feature_names = list(iris.feature_names)
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, stratify=y, random_state=42
+        X, y, test_size=0.2, stratify=y, random_state=39758307
     )
 
     logger.info(f"✓ Dataset Iris cargado: {X_train.shape}")
