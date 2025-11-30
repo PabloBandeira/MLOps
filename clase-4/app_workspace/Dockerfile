@@ -26,9 +26,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Crear directorio para notebooks
 RUN mkdir -p /app/notebooks
 
-# Copiar notebooks al contenedor
-# NOTA: Los notebooks deben estar en ../notebooks/ relativo a este Dockerfile
-COPY ../notebooks/*.ipynb /app/notebooks/ 2>/dev/null || true
+# NOTA: Los notebooks se copian al pod después del deploy con kubectl cp
+# Ver scripts/setup.sh y scripts/copy-notebooks.sh
 
 # Configurar Jupyter
 # - Sin token de autenticación (para simplicidad pedagógica)
