@@ -400,7 +400,9 @@ def main():
     logger.info(f"{'=' * 60}\n")
 
     # Entrenar modelo base para predicciones
-    model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
+    model = RandomForestClassifier(
+        n_estimators=100, max_depth=10, random_state=39758307
+    )
     model.fit(X_train, y_train)
 
     import uuid
