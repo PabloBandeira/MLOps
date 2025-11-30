@@ -5,7 +5,6 @@
 
 # Deployment de MLflow
 resource "kubernetes_deployment" "mlflow" {
-  depends_on = [kind_cluster.mlops]
   
   metadata {
     name = "mlflow"
@@ -35,12 +34,13 @@ resource "kubernetes_deployment" "mlflow" {
           name  = "mlflow"
           image = "ghcr.io/mlflow/mlflow:v2.10.0"
           
+          command = ["mlflow"]
           args = [
             "server",
             "--host", "0.0.0.0",
             "--port", "5000",
-            "--backend-store-uri", "sqlite:///mlflow/mlflow.db",
-            "--default-artifact-root", "/mlflow/artifacts"
+            "--backend-store-uri", "sqlite:////tmp/mlflow.db",
+            "--default-artifact-root", "/tmp/artifacts"
           ]
           
           port {

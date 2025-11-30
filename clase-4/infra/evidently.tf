@@ -5,7 +5,6 @@
 
 # ConfigMap para la configuración de Evidently
 resource "kubernetes_config_map" "evidently_config" {
-  depends_on = [kind_cluster.mlops]
   
   metadata {
     name = "evidently-config"
@@ -28,10 +27,7 @@ resource "kubernetes_config_map" "evidently_config" {
 
 # Deployment de Evidently
 resource "kubernetes_deployment" "evidently" {
-  depends_on = [
-    kind_cluster.mlops,
-    kubernetes_config_map.evidently_config
-  ]
+  depends_on = [kubernetes_config_map.evidently_config]
   
   metadata {
     name = "evidently"
@@ -78,27 +74,9 @@ resource "kubernetes_deployment" "evidently" {
             sub_path   = "config.yaml"
           }
           
-          # Health check
-          liveness_probe {
-            http_get {
-              path = "/health"
-              port = 8000
-            }
-            initial_delay_seconds = 15
-            period_seconds        = 10
-            timeout_seconds       = 5
-            failure_threshold     = 3
-          }
-          
-          readiness_probe {
-            http_get {
-              path = "/health"
-              port = 8000
-            }
-            initial_delay_seconds = 10
-            period_seconds        = 5
-            timeout_seconds       = 3
-          }
+          # Health check          
+          # Health checks deshabilitados temporalmente
+          # Evidently service no expone un endpoint /health consistente
           
           resources {
             requests = {

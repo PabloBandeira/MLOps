@@ -6,7 +6,6 @@
 
 # Deployment de Iris API (2 réplicas para alta disponibilidad)
 resource "kubernetes_deployment" "iris_api" {
-  depends_on = [kind_cluster.mlops]
   
   metadata {
     name = "iris-api"

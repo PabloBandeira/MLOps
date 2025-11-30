@@ -1,44 +1,15 @@
 # ========================================
 # CLÚSTER KIND
 # ========================================
-# Crea el clúster local de Kubernetes usando Kind
-
-resource "kind_cluster" "mlops" {
-  name            = "mlops-cluster"
-  wait_for_ready  = true
-  
-  kind_config {
-    kind        = "Cluster"
-    api_version = "kind.x-k8s.io/v1alpha4"
-    
-    node {
-      role = "control-plane"
-      
-      # Port mappings para exponer servicios
-      extra_port_mappings {
-        container_port = 30001
-        host_port      = 30001
-        protocol       = "TCP"
-      }
-      
-      extra_port_mappings {
-        container_port = 30002
-        host_port      = 30002
-        protocol       = "TCP"
-      }
-      
-      extra_port_mappings {
-        container_port = 30003
-        host_port      = 30003
-        protocol       = "TCP"
-      }
-      
-      extra_port_mappings {
-        container_port = 30004
-        host_port      = 30004
-        protocol       = "TCP"
-      }
-    }
-  }
-}
-
+# 
+# NOTA IMPORTANTE:
+# El clúster Kind se crea manualmente con el script setup.sh
+# Terraform solo gestiona los recursos DENTRO del clúster
+#
+# El clúster se crea con: 
+#   kind create cluster --name mlops-cluster --config kind-config.yaml
+# 
+# Esto evita conflictos de gestión y es el patrón recomendado para Kind
+# porque es una herramienta de desarrollo local.
+# 
+# Terraform gestiona: Deployments, Services, ConfigMaps, etc.

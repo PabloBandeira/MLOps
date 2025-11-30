@@ -9,8 +9,12 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Instalar dependencias del sistema
+# Incluimos gcc y python3-dev para compilar psutil y otras librerías
 RUN apt-get update && apt-get install -y \
     curl \
+    gcc \
+    g++ \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar requirements

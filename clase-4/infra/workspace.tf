@@ -5,7 +5,6 @@
 
 # Deployment de Workspace
 resource "kubernetes_deployment" "workspace" {
-  depends_on = [kind_cluster.mlops]
   
   metadata {
     name = "workspace"

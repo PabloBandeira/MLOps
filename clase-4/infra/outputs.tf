@@ -3,16 +3,6 @@
 # ========================================
 # Información útil después del despliegue
 
-output "cluster_name" {
-  description = "Nombre del clúster Kind"
-  value       = kind_cluster.mlops.name
-}
-
-output "cluster_endpoint" {
-  description = "Endpoint del clúster"
-  value       = kind_cluster.mlops.endpoint
-}
-
 output "mlflow_url" {
   description = "URL de acceso a MLflow"
   value       = "http://localhost:${var.mlflow_node_port}"
@@ -29,7 +19,7 @@ output "jupyter_url" {
 }
 
 output "iris_api_url" {
-  description = "URL de acceso al Iris API (opcional)"
+  description = "URL de acceso al Iris API"
   value       = "http://localhost:${var.iris_api_node_port}"
 }
 
@@ -81,4 +71,3 @@ output "useful_commands" {
     ========================================
   EOT
 }
-

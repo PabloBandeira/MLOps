@@ -7,11 +7,6 @@ terraform {
   required_version = ">= 1.0"
   
   required_providers {
-    kind = {
-      source  = "tehcyx/kind"
-      version = "~> 0.2"
-    }
-    
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "~> 2.23"
@@ -19,14 +14,10 @@ terraform {
   }
 }
 
-# Provider de Kind
-# Gestiona el clúster local de Kubernetes
-provider "kind" {}
-
 # Provider de Kubernetes
-# Gestiona los recursos dentro del clúster
+# Se conecta al clúster Kind que ya fue creado manualmente
+# El clúster debe existir antes de ejecutar terraform apply
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  config_path    = "~/.kube/config"
   config_context = "kind-mlops-cluster"
 }
-
