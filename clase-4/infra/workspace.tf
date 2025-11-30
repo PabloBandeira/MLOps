@@ -55,6 +55,11 @@ resource "kubernetes_deployment" "workspace" {
             value = "http://iris-service:8000"
           }
           
+          env {
+            name  = "IRIS_API_URL"
+            value = "http://iris-service:8000"
+          }
+          
           # Montar notebooks desde el host (opcional)
           # Nota: En Kind, los volúmenes hostPath son complejos
           # Por ahora, los notebooks están dentro de la imagen
