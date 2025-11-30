@@ -26,6 +26,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Crear directorio para notebooks
 RUN mkdir -p /app/notebooks
 
+# Copiar notebooks al contenedor
+# NOTA: Los notebooks deben estar en ../notebooks/ relativo a este Dockerfile
+COPY ../notebooks/*.ipynb /app/notebooks/ 2>/dev/null || true
+
 # Configurar Jupyter
 # - Sin token de autenticación (para simplicidad pedagógica)
 # - Permitir root (necesario en algunos entornos)

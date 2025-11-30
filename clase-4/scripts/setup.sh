@@ -207,8 +207,12 @@ WORKSPACE_POD=$(kubectl get pod -l app=workspace -o jsonpath='{.items[0].metadat
 
 if [ -n "$WORKSPACE_POD" ]; then
     echo "📋 Copiando notebooks al workspace..."
-    kubectl cp notebooks/01_simulacion.ipynb "$WORKSPACE_POD:/app/notebooks/" 2>/dev/null || warn "No se pudo copiar el notebook (puede que ya exista)"
-    info "Notebooks configurados"
+    # Crear directorio si no existe
+    kubectl exec "$WORKSPACE_POD" -- mkdir -p /app/notebooks 2>/dev/null || true
+    # Copiar el notebook
+    kubectl cp notebooks/01_simulacion.ipynb "$WORKSPACE_POD:/app/notebooks/01_simulacion.ipynb" 2>/dev/null && \
+        info "Notebook copiado exitosamente" || \
+        warn "No se pudo copiar el notebook (verifica que el archivo exista)"
 else
     warn "No se encontró el pod de workspace"
 fi
