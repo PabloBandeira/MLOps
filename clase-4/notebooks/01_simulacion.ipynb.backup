@@ -692,15 +692,15 @@
       "outputs": [],
       "source": [
         "# Obtener información del modelo\n",
-        "response = requests.get(f\"{IRIS_API_URL}/info\")\n",
+        "response = requests.get(f\"{IRIS_API_URL}/model/info\")\n",
         "model_info = response.json()\n",
         "\n",
         "print(\"📋 Información del Modelo:\\n\")\n",
         "print(json.dumps(model_info, indent=2))\n",
         "\n",
         "# Guardar features para referencia\n",
-        "feature_names = model_info['feature_names']\n",
-        "target_names = model_info['target_names']\n"
+        "feature_names = model_info['model']['feature_names']\n",
+        "target_names = model_info['model']['target_names']\n"
       ]
     },
     {
@@ -822,7 +822,6 @@
         "# Extraer predicciones y features\n",
         "df_production = df_sample[feature_names].copy()\n",
         "df_production['prediction'] = [p['prediction'] for p in predictions]\n",
-        "df_production['prediction_label'] = [p['prediction_label'] for p in predictions]\n",
         "df_production['prediction_id'] = [p['prediction_id'] for p in predictions]\n",
         "df_production['confidence'] = [p['confidence'] for p in predictions]\n",
         "df_production['timestamp'] = [p['timestamp'] for p in predictions]\n",
@@ -837,7 +836,7 @@
         "display(df_production[['prediction', 'confidence', 'target_name']].head())\n",
         "\n",
         "# Calcular accuracy\n",
-        "accuracy = (df_production['prediction_label'] == df_production['target_name']).mean()\n",
+        "accuracy = (df_production['prediction'] == df_production['target_name']).mean()\n",
         "print(f\"\\n📈 Accuracy en este batch: {accuracy:.2%}\")\n"
       ]
     },
@@ -927,7 +926,7 @@
         "    # Por clase\n",
         "    for target_name in target_names:\n",
         "        mask = df_production['target_name'] == target_name\n",
-        "        class_accuracy = (df_production[mask]['prediction_label'] == df_production[mask]['target_name']).mean()\n",
+        "        class_accuracy = (df_production[mask]['prediction'] == df_production[mask]['target_name']).mean()\n",
         "        mlflow.log_metric(f\"accuracy_{target_name}\", class_accuracy)\n",
         "    \n",
         "    # Guardar reporte de Evidently como artifact\n",

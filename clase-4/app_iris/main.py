@@ -10,6 +10,8 @@ import numpy as np
 import os
 from typing import Dict
 import logging
+import uuid
+from datetime import datetime
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -57,6 +59,8 @@ class PredictionResponse(BaseModel):
     probabilities: Dict[str, float] = Field(..., description="Probabilidades por clase")
     model_version: str = Field(..., description="Versión del modelo")
     features_used: Dict[str, float] = Field(..., description="Features utilizadas")
+    prediction_id: str = Field(..., description="ID único de la predicción")
+    timestamp: str = Field(..., description="Timestamp de la predicción (ISO 8601)")
 
 
 def load_model():
@@ -202,6 +206,10 @@ async def predict(features: IrisFeatures):
             f"(confianza: {confidence:.4f})"
         )
 
+        # Generar ID único y timestamp
+        prediction_id = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat() + "Z"
+
         return PredictionResponse(
             prediction=int(prediction),
             prediction_label=prediction_label,
@@ -209,6 +217,8 @@ async def predict(features: IrisFeatures):
             probabilities=prob_dict,
             model_version=MODEL_METADATA.get("version", "1.0.0"),
             features_used=features_dict,
+            prediction_id=prediction_id,
+            timestamp=timestamp,
         )
 
     except Exception as e:
