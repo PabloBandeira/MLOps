@@ -1,0 +1,13 @@
+jupyterlab==4.0.10
+pandas==2.2.0
+numpy==1.26.3
+requests==2.31.0
+mlflow==2.10.0
+
+# Evidently con sus dependencias específicas de Pydantic
+pydantic==1.10.13
+evidently==0.4.11
+
+scikit-learn==1.4.0
+matplotlib==3.8.2
+seaborn==0.13.1

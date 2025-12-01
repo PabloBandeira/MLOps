@@ -1,0 +1,215 @@
+═══════════════════════════════════════════════════════════════════════
+  RESUMEN: ¿QUÉ PUEDES CAMBIAR CON TERRAFORM EN ESTA CLASE?
+═══════════════════════════════════════════════════════════════════════
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  ✅ SÍ, TERRAFORM SIRVE PARA CAMBIAR COSAS EN VIVO              ┃
+┃  ✅ KUBERNETES HACE ROLLING UPDATES (ZERO DOWNTIME)             ┃
+┃  ✅ TERRAFORM GESTIONA 10 RECURSOS DE KUBERNETES                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+───────────────────────────────────────────────────────────────────────
+  ¿QUÉ GESTIONA TERRAFORM?
+───────────────────────────────────────────────────────────────────────
+
+📦 4 Deployments:
+   • mlflow (1 réplica)
+   • evidently (1 réplica)
+   • iris-api (2 réplicas)  ← Perfecto para demo de escalado
+   • workspace (1 réplica)
+
+🌐 4 Services:
+   • mlflow-service (NodePort 30001)
+   • evidently-service (NodePort 30002)
+   • iris-service (NodePort 30004)
+   • workspace-service (NodePort 30003)
+
+⚙️  1 ConfigMap:
+   • evidently-config (configuración de Evidently)
+
+───────────────────────────────────────────────────────────────────────
+  PRÁCTICAS RECOMENDADAS PARA LA CLASE
+───────────────────────────────────────────────────────────────────────
+
+🎬 DEMO 1: REDUCIR MEMORIA DE EVIDENTLY (7 min)
+   Archivo: infra/evidently.tf
+   Línea:   88
+   Cambio:  memory = "1Gi" → memory = "256Mi"
+   
+   Comandos:
+   $ cd infra
+   $ terraform plan     # Mostrar el diff
+   $ terraform apply    # Aplicar cambio
+   $ kubectl describe pod -l app=evidently | grep Limits -A 3
+
+   Concepto: Rolling update sin downtime
+
+
+🎬 DEMO 2: ESCALAR IRIS API (5 min)
+   Archivo: infra/iris_api.tf
+   Línea:   11
+   Cambio:  replicas = 2 → replicas = 4
+   
+   Comandos:
+   $ terraform plan
+   $ terraform apply -auto-approve
+   $ kubectl get pods -l app=iris-api
+   
+   Bonus - Probar balanceo de carga:
+   Terminal 1: $ kubectl logs -f -l app=iris-api --tail=0
+   Terminal 2: $ WORKSPACE_POD=$(kubectl get pod -l app=workspace -o jsonpath='{.items[0].metadata.name}')
+               $ for i in {1..20}; do kubectl exec $WORKSPACE_POD -- curl -s http://iris-service:8000/health > /dev/null; echo "Request $i"; sleep 0.3; done
+   
+   Concepto: Alta disponibilidad + load balancing
+
+
+🎬 DEMO 3: REVERTIR CAMBIOS (3 min)
+   Cambio: Volver a valores originales
+   
+   Comandos:
+   $ terraform plan     # Muestra cambios en reversa
+   $ terraform apply
+   
+   Concepto: Estado declarativo
+
+───────────────────────────────────────────────────────────────────────
+  ¿QUÉ PUEDES CAMBIAR?
+───────────────────────────────────────────────────────────────────────
+
+✅ Límites de Recursos (CPU/Memoria)
+   • Evidently: 1Gi → 256Mi (DEMO 1) ⭐
+   • MLflow: 500m CPU → 1000m CPU
+   • Iris API: 128Mi → 512Mi
+
+✅ Número de Réplicas
+   • Iris API: 2 → 4 réplicas (DEMO 2) ⭐
+   • MLflow: 1 → 2 réplicas (alta disponibilidad)
+
+✅ Variables de Entorno
+   • Workspace: Agregar LOG_LEVEL=DEBUG
+   • Iris API: Cambiar MLFLOW_URI
+
+✅ Puertos NodePort
+   • MLflow: 30001 → 30101
+   • Evidently: 30002 → 30102
+
+✅ Tipo de Servicio
+   • Iris API: NodePort → ClusterIP (solo interno)
+
+✅ ConfigMaps
+   • Evidently: Cambiar proyectos de monitoreo
+
+───────────────────────────────────────────────────────────────────────
+  ¿QUÉ NO PUEDES CAMBIAR?
+───────────────────────────────────────────────────────────────────────
+
+❌ El Modelo en Iris API
+   → Requiere: docker build + kind load + rollout restart
+
+❌ El Clúster de Kind
+   → Se crea manualmente antes de Terraform
+
+❌ Los Notebooks
+   → Se copian con: ./scripts/copy-notebooks.sh
+
+───────────────────────────────────────────────────────────────────────
+  FLUJO DE CAMBIOS
+───────────────────────────────────────────────────────────────────────
+
+1. Editar archivo .tf
+   ↓
+2. terraform plan (revisar cambios)
+   ↓
+3. terraform apply (aplicar)
+   ↓
+4. Kubernetes hace rolling update
+   ↓
+5. Verificar con kubectl
+
+Tiempo típico: 30-60 segundos
+Downtime: 0 segundos ✅
+
+───────────────────────────────────────────────────────────────────────
+  ARCHIVOS CREADOS PARA LA CLASE
+───────────────────────────────────────────────────────────────────────
+
+📄 PRACTICAS_TERRAFORM.md
+   → Guía completa con 3 prácticas graduales
+   → Incluye preguntas para alumnos
+   → Troubleshooting
+
+📄 DEMO_TERRAFORM_CLASE.md
+   → Script paso a paso para la clase (15 min)
+   → Comandos exactos copy-paste
+   → Qué decir en cada paso
+
+📄 QUE_GESTIONA_TERRAFORM.md
+   → Explicación detallada de cada recurso
+   → Matriz de cambios posibles
+   → Conceptos clave visualizados
+
+───────────────────────────────────────────────────────────────────────
+  COMANDOS RÁPIDOS
+───────────────────────────────────────────────────────────────────────
+
+# Ver plan sin aplicar
+terraform plan
+
+# Aplicar cambios
+terraform apply
+
+# Aplicar sin confirmar (para demos)
+terraform apply -auto-approve
+
+# Ver recursos gestionados
+terraform state list
+
+# Ver estado de un recurso
+terraform state show kubernetes_deployment.evidently
+
+# Sincronizar estado
+terraform refresh
+
+# Destruir todo (al final de la clase)
+terraform destroy
+
+───────────────────────────────────────────────────────────────────────
+  CONCEPTOS CLAVE A ENFATIZAR
+───────────────────────────────────────────────────────────────────────
+
+🔑 Infrastructure as Code (IaC)
+   → La infraestructura es código versionable
+
+🔑 Declarativo vs Imperativo
+   → Describes "qué" no "cómo"
+
+🔑 Estado Deseado vs Estado Real
+   → Terraform converge al estado declarado
+
+🔑 Zero Downtime
+   → Rolling updates automáticos
+
+🔑 Plan Before Apply
+   → Siempre revisar con 'plan' antes de 'apply'
+
+───────────────────────────────────────────────────────────────────────
+  RESPUESTA A TU PREGUNTA ORIGINAL
+───────────────────────────────────────────────────────────────────────
+
+"¿Terraform sirve para cambiar cosas mientras el nodo sigue funcionando?"
+→ SÍ ✅
+
+"¿Se puede cambiar la memoria de Evidently de 1GB a 128MB?"
+→ SÍ ✅ (línea 88 de infra/evidently.tf)
+
+"¿Qué podemos cambiar exactamente?"
+→ Recursos, réplicas, env vars, puertos, configuración
+→ TODO excepto: el modelo (requiere rebuild), el cluster Kind, notebooks
+
+"¿Qué práctica puedo hacer para mostrar a los alumnos?"
+→ DEMO 1: Reducir memoria de Evidently (1Gi → 256Mi)
+→ DEMO 2: Escalar Iris API (2 → 4 réplicas)
+→ Ver: DEMO_TERRAFORM_CLASE.md
+
+═══════════════════════════════════════════════════════════════════════
+

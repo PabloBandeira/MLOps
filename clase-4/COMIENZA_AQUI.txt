@@ -1,0 +1,256 @@
+================================================================================
+                    🚀 CLASE 4: MLOps en Kubernetes
+                     Migración de Docker Compose a K8s
+================================================================================
+
+¡Bienvenido/a a la Clase 4 de MLOps!
+
+En esta sesión vas a migrar toda la arquitectura de las clases anteriores
+(Docker Compose) a Kubernetes usando Kind (Kubernetes local) y Terraform.
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          📋 ORDEN DE LECTURA                              │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   1️⃣  ONBOARDING.md
+       👉 EMPIEZA AQUÍ
+       📖 Guía paso a paso completa con instalación de herramientas
+       ⏱️  Tiempo estimado: 45-60 minutos
+
+   2️⃣  README.md
+       📖 Visión general del proyecto y arquitectura
+       ⏱️  Tiempo estimado: 10 minutos
+
+   3️⃣  ARCHITECTURE.md
+       📖 Diagramas detallados y explicación de componentes
+       ⏱️  Tiempo estimado: 15 minutos
+
+   4️⃣  QUICK_REFERENCE.md
+       📖 Comandos útiles y troubleshooting
+       ⏱️  Tiempo estimado: Referencia continua
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🎯 OBJETIVOS DE LA CLASE                         │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   ✅ Comprender la diferencia entre Docker Compose y Kubernetes
+   ✅ Gestionar infraestructura con Terraform (IaC)
+   ✅ Implementar el patrón inmutable en contenedores
+   ✅ Trabajar con servicios ClusterIP y NodePort
+   ✅ Usar DNS interno de Kubernetes
+   ✅ Escalar aplicaciones horizontalmente
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🛠️  HERRAMIENTAS NECESARIAS                      │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   ✓ Docker Desktop  (ya lo tienes de clases anteriores)
+   ✓ Kind            (nuevo - Kubernetes local)
+   ✓ kubectl         (nuevo - CLI de Kubernetes)
+   ✓ Terraform       (nuevo - Infrastructure as Code)
+   ✓ Python 3.9+     (ya lo tienes)
+
+   💡 IMPORTANTE: Ejecuta esto primero para verificar:
+      
+      ./scripts/check-prerequisites.sh
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          ⚡ INICIO RÁPIDO                                 │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   Si ya tienes todas las herramientas instaladas:
+
+   1. Verifica prerrequisitos:
+      ./scripts/check-prerequisites.sh
+
+   2. Despliega todo automáticamente:
+      ./scripts/setup.sh
+
+   3. Abre Jupyter Lab:
+      http://localhost:30003
+
+   4. Ejecuta el notebook:
+      notebooks/01_simulacion.ipynb
+
+   ⏱️  Tiempo total: ~5-10 minutos
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          📊 ¿QUÉ VAS A CONSTRUIR?                         │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   Un clúster Kubernetes local con:
+
+   🔹 MLflow          → Tracking de experimentos     (puerto 30001)
+   🔹 Evidently       → Detección de drift           (puerto 30002)
+   🔹 Iris API        → Predicción con 2 réplicas    (puerto 30004)
+   🔹 Jupyter Lab     → Tu entorno de trabajo        (puerto 30003)
+
+   Todo gestionado por Terraform y corriendo en un solo comando.
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🎓 CONCEPTOS CLAVE                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   1. PATRÓN INMUTABLE
+      El modelo se entrena durante el `docker build` y queda "cocinado"
+      en la imagen. Sin volúmenes compartidos.
+
+   2. INFRASTRUCTURE AS CODE
+      Toda la infraestructura se define en archivos .tf de Terraform.
+      Es versionable, reproducible y auditable.
+
+   3. DNS DE KUBERNETES
+      Los servicios se comunican por nombres:
+      - http://mlflow-service:5000
+      - http://iris-service:8000
+      - http://evidently-service:8000
+
+   4. ALTA DISPONIBILIDAD
+      El Iris API tiene 2 réplicas con load balancing automático.
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          📁 ESTRUCTURA DEL PROYECTO                       │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   clase-4/
+   ├── 📄 ONBOARDING.md               ← EMPIEZA AQUÍ
+   ├── 📄 README.md                   ← Visión general
+   ├── 📄 ARCHITECTURE.md             ← Diagramas técnicos
+   ├── 📄 QUICK_REFERENCE.md          ← Comandos útiles
+   │
+   ├── 📁 app_iris/                   ← API de predicción
+   │   ├── Dockerfile                 ← Build con modelo incluido
+   │   ├── train.py                   ← Entrenamiento en build-time
+   │   ├── main.py                    ← FastAPI
+   │   └── requirements.txt
+   │
+   ├── 📁 app_workspace/              ← Entorno Jupyter
+   │   ├── Dockerfile
+   │   └── requirements.txt
+   │
+   ├── 📁 notebooks/                  ← Material práctico
+   │   └── 01_simulacion.ipynb        ← Ejecuta esto al final
+   │
+   ├── 📁 infra/                      ← Terraform (IaC)
+   │   ├── provider.tf                ← Configuración de providers
+   │   ├── cluster.tf                 ← Clúster Kind
+   │   ├── mlflow.tf                  ← Deployment + Service
+   │   ├── evidently.tf               ← Deployment + Service
+   │   ├── iris_api.tf                ← Deployment + Service
+   │   ├── workspace.tf               ← Deployment + Service
+   │   ├── variables.tf               ← Variables configurables
+   │   ├── outputs.tf                 ← Información de salida
+   │   └── kind-config.yaml           ← Config del clúster
+   │
+   ├── 📁 scripts/                    ← Automatización
+   │   ├── check-prerequisites.sh     ← Verifica herramientas
+   │   ├── setup.sh                   ← Despliega todo
+   │   └── cleanup.sh                 ← Limpia todo
+   │
+   └── 📁 reports/                    ← Reportes de Evidently
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🔄 FLUJO DE TRABAJO                              │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   Fase 1: PREPARACIÓN (10-15 min)
+   ─────────────────────────────────
+   1. Verificar prerrequisitos
+   2. Instalar herramientas faltantes
+   3. Leer documentación
+
+   Fase 2: DESPLIEGUE (5-10 min)
+   ──────────────────────────────
+   1. Construir imágenes Docker
+   2. Crear clúster Kind
+   3. Cargar imágenes al clúster
+   4. Aplicar Terraform
+
+   Fase 3: PRÁCTICA (20-30 min)
+   ─────────────────────────────
+   1. Abrir Jupyter Lab
+   2. Ejecutar notebook de simulación
+   3. Revisar resultados en MLflow
+   4. Analizar drift en Evidently
+
+   Fase 4: EXPERIMENTACIÓN (abierto)
+   ──────────────────────────────────
+   1. Escalar réplicas del API
+   2. Ver logs de los pods
+   3. Simular fallos
+   4. Probar comandos kubectl
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          ⚠️  IMPORTANTE                                   │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   ⚠️  Esta clase requiere ~8 GB de RAM disponible
+       (Docker Desktop + Kind + 5 pods)
+
+   ⚠️  El primer despliegue toma más tiempo (descarga de imágenes)
+       Despliegues posteriores son más rápidos
+
+   ⚠️  Si algo falla, lee la sección de Troubleshooting
+       en ONBOARDING.md o QUICK_REFERENCE.md
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          💡 TIPS                                          │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   💡 Usa el script de verificación antes de empezar:
+      ./scripts/check-prerequisites.sh
+
+   💡 Si tienes errores, lee los logs:
+      kubectl logs -l app=iris-api
+
+   💡 Mantén abierta la QUICK_REFERENCE.md como referencia
+
+   💡 Si algo se rompe, puedes destruir y recrear fácilmente:
+      ./scripts/cleanup.sh
+      ./scripts/setup.sh
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          📚 RECURSOS ÚTILES                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   📖 Kubernetes Docs:    https://kubernetes.io/docs/
+   📖 Kind Docs:          https://kind.sigs.k8s.io/
+   📖 Terraform Docs:     https://www.terraform.io/docs
+   📖 kubectl Cheatsheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🆘 ¿NECESITAS AYUDA?                             │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   1. Revisa ONBOARDING.md → Sección de Troubleshooting
+   2. Revisa QUICK_REFERENCE.md → Problemas comunes
+   3. Verifica los logs: kubectl logs <POD_NAME>
+   4. Consulta con tu instructor
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🎉 ¡LISTO PARA EMPEZAR!                          │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   Ahora que tienes una visión general, es momento de iniciar:
+
+   👉 Abre ONBOARDING.md y sigue las instrucciones paso a paso
+
+
+================================================================================
+                              ¡Mucha suerte! 🚀
+================================================================================
+
+
