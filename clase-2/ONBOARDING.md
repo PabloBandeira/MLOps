@@ -46,10 +46,7 @@ pip install --upgrade pip
 pip install -r requirements.txt -r requirements-dev.txt
 
 # Configurar pre-commit
-# pre-commit install
-
-mlflow ui --port 5000
-
+pre-commit install
 
 # Verificar instalación
 pytest -q
@@ -339,14 +336,6 @@ curl -X POST http://127.0.0.1:9000/invocations \
 
 ```json
 {"predictions": [0]}
-```
-
-```json
-{"predictions": [1]}
-```
-
-```json
-{"predictions": [2]}
 ```
 
 ---

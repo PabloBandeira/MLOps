@@ -57,17 +57,8 @@ which python
 pip install --upgrade pip
 pip install -r requirements.txt -r requirements-dev.txt
 
-
-#Sin files guardados
 bash scripts/quick-start.sh
 
-#Con files guardados
-docker run -p 5000:5000 -p 9000:9000 -v "$PWD:/app" --rm demo-ml-clase22:local
-
-
-curl -X POST http://localhost:9000/invocations \
-  -H 'Content-Type: application/json' \
-  -d '{"dataframe_split": {"columns": ["0", "1", "2", "3"], "data": [[7.7, 3.8, 6.7, 2.2]]}}'
 
 ```
 
@@ -138,6 +129,7 @@ demo-ml-clase22   local   abc123def456   2 minutes ago   1.5GB
 
 ```bash
 docker run -p 5000:5000 -p 9000:9000 --rm demo-ml-clase22:local
+docker run -p 8080:5000 -p 9000:9000 -v "$PWD:/app" --rm demo-ml-clase22:local 
 ```
 
 **¿Qué sucede?**

@@ -27,7 +27,7 @@ echo ""
 # ============================================
 echo "🎯 Paso 2: Levantando MLflow UI en puerto 5000..."
 echo "=========================================="
-mlflow ui --host 0.0.0.0 --port 5000 &
+mlflow ui --host 0.0.0.0 --port 5001 &
 MLFLOW_UI_PID=$!
 echo "✅ MLflow UI iniciado (PID: $MLFLOW_UI_PID)"
 sleep 2
