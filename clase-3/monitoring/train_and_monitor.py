@@ -121,7 +121,7 @@ def load_and_prepare_data():
 # =============================
 # PASO 2: TRAIN/TEST SPLIT
 # =============================
-def split_data(X, y, test_size=0.2, random_state=39758307):
+def split_data(X, y, test_size=0.2, random_state=26461180):
     """
     Divide datos en train y test de forma estratificada.
 
@@ -173,7 +173,7 @@ def train_model(X_train, y_train, hyperparams=None):
             "max_depth": 10,
             "min_samples_split": 5,
             "min_samples_leaf": 2,
-            "random_state": 39758307,
+            "random_state": 26461180,
             "n_jobs": -1,
         }
 
