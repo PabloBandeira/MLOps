@@ -180,6 +180,42 @@ terraform --version
 
 ---
 
+## 🔧 ¿Qué Recursos Crea Terraform?
+
+Cuando ejecutas `terraform apply`, Terraform crea automáticamente estos recursos en Kubernetes:
+
+### **Deployments (Pods):**
+- 📦 **mlflow** (1 réplica) - Servidor de tracking de experimentos
+- 📦 **evidently** (1 réplica) - Servicio de monitoreo de datos
+- 📦 **iris-api** (2 réplicas) - API de predicción con alta disponibilidad
+- 📦 **workspace** (1 réplica) - Jupyter Lab para los alumnos
+
+### **Services (Redes):**
+- 🌐 **mlflow-service** (NodePort 30001) - Acceso externo a MLflow
+- 🌐 **evidently-service** (NodePort 30002) - Acceso externo a Evidently
+- 🌐 **iris-service** (NodePort 30004) - Acceso externo a la API
+- 🌐 **workspace-service** (NodePort 30003) - Acceso externo a Jupyter
+
+### **ConfigMaps (Configuración):**
+- ⚙️ **evidently-config** - Archivo de configuración para Evidently
+
+### **Total:** 
+10 recursos gestionados por Terraform de forma declarativa
+
+### **💡 Ventajas de usar Terraform:**
+✅ **Reproducible** - Mismo código = mismo resultado  
+✅ **Versionable** - Control de cambios con Git  
+✅ **Declarativo** - Describes "qué quieres", no "cómo hacerlo"  
+✅ **Auditable** - Historial completo de cambios  
+
+### **Ver el plan antes de aplicar:**
+```bash
+cd infra
+terraform plan  # Muestra QUÉ va a crear sin ejecutar
+```
+
+---
+
 ## 🚦 Paso a Paso
 
 ### Paso 1: Navegar al directorio de la clase
@@ -275,7 +311,32 @@ Cuando te pregunte "Do you want to perform these actions?", escribe `yes` y pres
 
 ---
 
-### Paso 6: Esperar a que todos los pods estén listos
+### Paso 6: Copiar Notebooks al Workspace
+
+Una vez que Terraform completó el despliegue, copia los notebooks al pod del workspace:
+
+```bash
+cd ..  # Regresar al directorio raíz
+./scripts/copy-notebooks.sh
+```
+
+**🔍 ¿Por qué este paso?**
+
+Los notebooks no están incluidos en la imagen del workspace. Se copian al pod después del despliegue para que:
+- ✅ Puedas editarlos sin reconstruir la imagen
+- ✅ Los cambios no se pierdan al reconstruir el workspace
+- ✅ Sea más rápido iterar durante el desarrollo
+
+**Verificar que se copiaron:**
+```bash
+kubectl exec $(kubectl get pod -l app=workspace -o jsonpath='{.items[0].metadata.name}') -- ls -la /app/notebooks/
+```
+
+Deberías ver `01_simulacion.ipynb` en la lista.
+
+---
+
+### Paso 7: Esperar a que todos los pods estén listos
 
 ```bash
 kubectl get pods -w
@@ -293,6 +354,12 @@ workspace-xxxxxxxxx-xxxxx     1/1     Running   0          30s
 ```
 
 Presiona `Ctrl+C` para salir del modo watch.
+
+---
+
+### Paso 8: Verificar el Despliegue
+
+Ahora que todos los pods están corriendo, verifica que todo esté funcionando correctamente.
 
 ---
 
