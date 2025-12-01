@@ -39,6 +39,26 @@ Bienvenido a la Clase 4 de MLOps. En esta sesión migraremos toda nuestra arquit
 - 🆕 **kubectl** - CLI de Kubernetes
 - 🆕 **Terraform** - Gestor de infraestructura
 
+### 💻 Nota sobre Sistemas Operativos:
+
+Esta guía incluye instrucciones para **macOS** y **Windows**.
+
+**Terminales recomendadas:**
+- **macOS/Linux:** Terminal nativa o iTerm2
+- **Windows:** PowerShell (recomendado) o Git Bash
+  - ⚠️ Si usas CMD, algunos comandos pueden variar
+  - ✅ PowerShell es la mejor opción para Windows
+
+**Notación:**
+- 📝 Los comandos marcados con `bash` funcionan en macOS/Linux y Git Bash
+- 📝 Los comandos marcados con `powershell` son específicos para Windows PowerShell
+
+**🍫 Usuarios de Windows:**
+Si quieres instalar herramientas más rápidamente usando **Chocolatey** (gestor de paquetes), consulta primero:
+- 📄 **[INSTALL_CHOCOLATEY.md](INSTALL_CHOCOLATEY.md)** - Guía completa de instalación de Chocolatey
+
+Con Chocolatey instalado, podrás instalar Kind, kubectl y Terraform con un solo comando cada uno.
+
 ---
 
 ## 📦 Instalación de Herramientas
@@ -50,18 +70,39 @@ docker --version
 # Debe mostrar: Docker version 24.x.x o superior
 ```
 
-Si Docker no está corriendo, inicia Docker Desktop.
+**Si Docker no está corriendo:**
+- **macOS:** Inicia Docker Desktop desde Aplicaciones
+- **Windows:** Inicia Docker Desktop desde el menú inicio
+
+**⚠️ IMPORTANTE para Windows:**
+Docker Desktop debe usar **WSL 2** (no Hyper-V legacy).
+
+**Verificar WSL 2 en Windows:**
+```powershell
+wsl --list --verbose
+# Deberías ver docker-desktop corriendo con VERSION 2
+```
+
+**Si no tienes WSL 2:**
+```powershell
+# Instalar WSL 2
+wsl --install
+
+# Reiniciar tu computadora
+# Luego configurar Docker Desktop para usar WSL 2:
+# Settings → General → Use WSL 2 based engine ✓
+```
 
 ---
 
 ### Paso 2: Instalar Kind
 
-**macOS (con Homebrew):**
+#### **macOS (con Homebrew):**
 ```bash
 brew install kind
 ```
 
-**macOS (sin Homebrew):**
+#### **macOS (sin Homebrew):**
 ```bash
 # Descargar binario
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-darwin-arm64
@@ -74,7 +115,31 @@ chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 ```
 
-**Verificar instalación:**
+#### **Windows (con Chocolatey):**
+```powershell
+choco install kind
+```
+
+#### **Windows (sin Chocolatey):**
+
+**Opción 1 - PowerShell:**
+```powershell
+# Descargar binario
+curl.exe -Lo kind-windows-amd64.exe https://kind.sigs.k8s.io/dl/v0.20.0/kind-windows-amd64
+
+# Mover a una carpeta en PATH (ejemplo: C:\tools)
+Move-Item .\kind-windows-amd64.exe C:\tools\kind.exe
+
+# O agregarlo al PATH del usuario
+$env:Path += ";C:\tools"
+```
+
+**Opción 2 - Manual:**
+1. Descargar desde: https://kind.sigs.k8s.io/dl/v0.20.0/kind-windows-amd64
+2. Renombrar a `kind.exe`
+3. Mover a una carpeta en tu PATH (ej: `C:\Windows\System32` o crear `C:\tools`)
+
+#### **Verificar instalación:**
 ```bash
 kind --version
 # Debe mostrar: kind v0.20.0 o superior
@@ -84,12 +149,12 @@ kind --version
 
 ### Paso 3: Instalar kubectl
 
-**macOS (con Homebrew):**
+#### **macOS (con Homebrew):**
 ```bash
 brew install kubectl
 ```
 
-**macOS (sin Homebrew):**
+#### **macOS (sin Homebrew):**
 ```bash
 # Descargar binario
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/arm64/kubectl"
@@ -102,7 +167,30 @@ chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
 ```
 
-**Verificar instalación:**
+#### **Windows (con Chocolatey):**
+```powershell
+choco install kubernetes-cli
+```
+
+#### **Windows (sin Chocolatey):**
+
+**PowerShell:**
+```powershell
+# Descargar última versión estable
+curl.exe -LO "https://dl.k8s.io/release/v1.28.0/bin/windows/amd64/kubectl.exe"
+
+# Mover a una carpeta en PATH
+Move-Item .\kubectl.exe C:\tools\kubectl.exe
+
+# O agregarlo al PATH
+$env:Path += ";C:\tools"
+```
+
+**O usar instalador:**
+1. Descargar desde: https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+2. Seguir las instrucciones del instalador
+
+#### **Verificar instalación:**
 ```bash
 kubectl version --client
 # Debe mostrar la versión del cliente
@@ -112,13 +200,13 @@ kubectl version --client
 
 ### Paso 4: Instalar Terraform
 
-**macOS (con Homebrew):**
+#### **macOS (con Homebrew):**
 ```bash
 brew tap hashicorp/tap
 brew install hashicorp/tap/terraform
 ```
 
-**macOS (sin Homebrew):**
+#### **macOS (sin Homebrew):**
 ```bash
 # Descargar binario (ARM)
 curl -LO https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_darwin_arm64.zip
@@ -136,7 +224,35 @@ sudo mv terraform /usr/local/bin/
 rm terraform_1.6.6_darwin_arm64.zip
 ```
 
-**Verificar instalación:**
+#### **Windows (con Chocolatey):**
+```powershell
+choco install terraform
+```
+
+#### **Windows (sin Chocolatey):**
+
+**PowerShell:**
+```powershell
+# Descargar binario (64-bit)
+curl.exe -LO https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_windows_amd64.zip
+
+# Descomprimir (requiere Expand-Archive)
+Expand-Archive terraform_1.6.6_windows_amd64.zip -DestinationPath C:\tools
+
+# Agregar al PATH (permanente)
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\tools", "User")
+
+# Limpiar
+Remove-Item terraform_1.6.6_windows_amd64.zip
+```
+
+**O instalación manual:**
+1. Descargar desde: https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_windows_amd64.zip
+2. Descomprimir el archivo
+3. Mover `terraform.exe` a una carpeta en tu PATH (ej: `C:\tools`)
+4. Reiniciar PowerShell
+
+#### **Verificar instalación:**
 ```bash
 terraform --version
 # Debe mostrar: Terraform v1.6.x o superior
@@ -220,8 +336,21 @@ terraform plan  # Muestra QUÉ va a crear sin ejecutar
 
 ### Paso 1: Navegar al directorio de la clase
 
+**macOS/Linux:**
 ```bash
-cd /Users/pablo/Desktop/MLops/clase-4
+cd ~/Desktop/MLops/clase-4
+# O la ruta donde tengas el proyecto
+```
+
+**Windows (PowerShell):**
+```powershell
+cd C:\Users\TuUsuario\Desktop\MLops\clase-4
+# O la ruta donde tengas el proyecto
+```
+
+**Windows (CMD):**
+```cmd
+cd C:\Users\TuUsuario\Desktop\MLops\clase-4
 ```
 
 ---
@@ -315,9 +444,23 @@ Cuando te pregunte "Do you want to perform these actions?", escribe `yes` y pres
 
 Una vez que Terraform completó el despliegue, copia los notebooks al pod del workspace:
 
+**macOS/Linux:**
 ```bash
 cd ..  # Regresar al directorio raíz
 ./scripts/copy-notebooks.sh
+```
+
+**Windows (PowerShell con Git Bash instalado):**
+```powershell
+cd ..
+bash scripts/copy-notebooks.sh
+```
+
+**Windows (PowerShell sin Git Bash):**
+```powershell
+cd ..
+$WORKSPACE_POD = kubectl get pod -l app=workspace -o jsonpath='{.items[0].metadata.name}'
+kubectl cp notebooks/01_simulacion.ipynb "${WORKSPACE_POD}:/app/notebooks/"
 ```
 
 **🔍 ¿Por qué este paso?**
@@ -498,13 +641,23 @@ kubectl port-forward service/mlflow-service 5000:5000
 
 ### Problema: Jupyter no muestra los notebooks
 
-**Verificar el volumen:**
+**Causa:** Los notebooks no están copiados al pod del workspace.
+
+**Solución:**
 ```bash
-kubectl describe pod -l app=workspace | grep -A 5 Volumes
+# Copiar notebooks al workspace
+./scripts/copy-notebooks.sh
+
+# En Windows (PowerShell):
+# bash scripts/copy-notebooks.sh
+# O ejecutar manualmente:
+# kubectl cp notebooks/01_simulacion.ipynb $(kubectl get pod -l app=workspace -o jsonpath='{.items[0].metadata.name}'):/app/notebooks/
 ```
 
-**Verificar que la ruta local sea correcta:**
-El volumen debe apuntar a `/Users/pablo/Desktop/MLops/clase-4/notebooks`
+**Verificar que se copiaron:**
+```bash
+kubectl exec $(kubectl get pod -l app=workspace -o jsonpath='{.items[0].metadata.name}') -- ls -la /app/notebooks/
+```
 
 ---
 
@@ -615,6 +768,25 @@ Si tienes problemas:
 - **Prerrequisitos:** Haber completado Clases 1-3
 - **Complejidad:** Media-Alta
 - **¿Qué aprendiste?** Migración de Docker Compose a Kubernetes con IaC
+
+### 💡 Diferencias entre Sistemas Operativos
+
+| Aspecto | macOS/Linux | Windows |
+|---------|-------------|---------|
+| **Terminal recomendada** | Terminal / iTerm2 | PowerShell / Git Bash |
+| **Separador de rutas** | `/` | `\` o `/` (PowerShell acepta ambos) |
+| **Scripts shell** | Ejecutan directo | Requieren `bash script.sh` |
+| **Variables de entorno** | `$VAR` | `$env:VAR` (PowerShell) |
+| **Docker context** | Nativo | WSL 2 backend |
+
+### 🔧 Tips para Windows:
+
+1. **Usa PowerShell como administrador** para instalaciones
+2. **Git Bash** es útil para ejecutar scripts `.sh`
+3. **WSL 2** debe estar habilitado para Docker Desktop
+4. Las rutas con espacios deben ir entre comillas: `"C:\Program Files\..."`
+
+---
 
 ¡Éxito en tu práctica! 🚀
 

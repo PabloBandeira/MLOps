@@ -106,6 +106,7 @@ open http://localhost:30003
 clase-4/
 ├── README.md                    # Este archivo
 ├── ONBOARDING.md                # Guía detallada paso a paso
+├── INSTALL_CHOCOLATEY.md        # Instalación de Chocolatey (Windows)
 ├── .gitignore                   # Archivos a ignorar en Git
 │
 ├── app_iris/                    # Servicio de inferencia
