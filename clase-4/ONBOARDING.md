@@ -736,7 +736,7 @@ Los servicios se comunican por nombres internos:
 - **ClusterIP:** Solo accesible dentro del clúster (para comunicación interna)
 
 ### 5. **Workspace como "Entorno del Alumno"**
-Todo el código Python se ejecuta dentro del contenedor Jupyter. Tu laptop solo necesita Docker + Kind + Terraform.
+Todo el código Python se ejecuta dentro del contenedor Jupyter. Tu notebook solo necesita Docker + Kind + Terraform.
 
 ---
 
