@@ -409,6 +409,52 @@ kubectl get pods -o wide
 
 ### **DEMO 2: Ver Recursos de Cada Nodo**
 
+**⚠️ Prerequisito:** Primero debes instalar Metrics Server (Kind no lo incluye por defecto).
+
+#### **Paso 1: Instalar Metrics Server**
+
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+
+**Verificar que se desplegó:**
+```bash
+kubectl get deployment metrics-server -n kube-system
+```
+
+**Output esperado:**
+```
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+metrics-server   1/1     1            1           10s
+```
+
+---
+
+#### **Paso 2: Parchear para Kind (Deshabilitar TLS Validation)**
+
+Kind usa certificados self-signed, debemos deshabilitar la validación TLS:
+
+```bash
+kubectl patch deployment metrics-server -n kube-system --type='json' -p='[
+  {
+    "op": "add",
+    "path": "/spec/template/spec/containers/0/args/-",
+    "value": "--kubelet-insecure-tls"
+  }
+]'
+```
+
+**Esperar 30 segundos a que el pod se reinicie:**
+```bash
+sleep 30
+```
+
+---
+
+#### **Paso 3: Ver Uso de Recursos por Nodo**
+
+Ahora sí puedes usar `kubectl top nodes`:
+
 ```bash
 kubectl top nodes
 ```
@@ -422,6 +468,21 @@ mlops-cluster-worker2        280m         14%    750Mi           19%
 ```
 
 **💡 Muestra:** Los workers tienen más carga que el control-plane (como debe ser).
+
+**También puedes ver recursos por pod:**
+```bash
+kubectl top pods
+```
+
+**Output esperado:**
+```
+NAME                         CPU(cores)   MEMORY(bytes)
+evidently-xxx                10m          180Mi
+iris-api-xxx-1               5m           80Mi
+iris-api-xxx-2               5m           85Mi
+mlflow-xxx                   15m          350Mi
+workspace-xxx                20m          200Mi
+```
 
 ---
 
