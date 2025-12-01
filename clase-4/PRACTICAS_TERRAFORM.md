@@ -306,7 +306,7 @@ iris-api-abc123-jkl         1/1     Running             0          4s
 
 **Terminal 1 - Ver logs de todas las réplicas:**
 ```bash
-kubectl logs -f -l app=iris-api --tail=0
+kubectl logs -f -l app=iris-api --tail=0 --prefix
 ```
 
 **¿Qué hace?**

@@ -210,7 +210,7 @@ kubectl get pods -l app=iris-api
 **Bonus: Probar balanceo de carga (ver logs en tiempo real):**
 ```bash
 # Terminal 1: Ver logs de todas las réplicas
-kubectl logs -f -l app=iris-api --tail=0
+kubectl logs -f -l app=iris-api --tail=0 --prefix
 
 # Terminal 2: Hacer requests desde dentro del workspace
 WORKSPACE_POD=$(kubectl get pod -l app=workspace -o jsonpath='{.items[0].metadata.name}')
