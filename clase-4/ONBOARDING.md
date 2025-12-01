@@ -117,8 +117,15 @@ sudo mv ./kind /usr/local/bin/kind
 
 #### **Windows (con Chocolatey):**
 ```powershell
-choco install kind
+# IMPORTANTE: Usa --ignore-dependencies para NO reinstalar Docker
+choco install kind -y --ignore-dependencies
 ```
+
+**💡 ¿Por qué `--ignore-dependencies`?**
+- Kind tiene Docker como dependencia en Chocolatey
+- Ya tienes Docker Desktop instalado de clases anteriores
+- Este flag evita que Chocolatey intente reinstalar Docker
+- Es seguro: Kind funcionará con tu Docker existente
 
 #### **Windows (sin Chocolatey):**
 

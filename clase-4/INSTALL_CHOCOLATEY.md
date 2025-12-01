@@ -135,7 +135,38 @@ Luego vuelve a ejecutar el script de instalación.
 
 ---
 
-### **Problema 4: Error de red o timeout**
+### **Problema 4: Chocolatey intenta instalar Docker al instalar Kind**
+
+**Causa:** Kind declara Docker como dependencia, y Chocolatey intenta instalar `docker-desktop`.
+
+**Síntoma:**
+```
+Installing the following packages:
+kind
+By installing, you accept licenses for the packages.
+Progress: Downloading docker-desktop...
+```
+
+**Solución - Usar `--ignore-dependencies`:**
+```powershell
+choco install kind -y --ignore-dependencies
+```
+
+**✅ Esto es SEGURO porque:**
+- Ya tienes Docker Desktop instalado de clases anteriores
+- Kind solo necesita que Docker esté corriendo, no importa cómo se instaló
+- `--ignore-dependencies` evita la reinstalación innecesaria
+
+**Verificar que Docker funciona:**
+```powershell
+docker --version
+docker ps
+# Si ambos comandos funcionan, Docker está listo para Kind
+```
+
+---
+
+### **Problema 5: Error de red o timeout**
 
 **Causa:** Firewall, antivirus o proxy bloqueando la descarga.
 
@@ -217,9 +248,15 @@ choco uninstall nombre-paquete -y
 
 Una vez que Chocolatey esté instalado, puedes instalar las herramientas necesarias para la clase:
 
+### **⚠️ IMPORTANTE: Ya tienes Docker Desktop instalado**
+
+Kind tiene Docker como dependencia, pero **ya lo tienes instalado de clases anteriores**.
+
+**Usa `--ignore-dependencies` para evitar reinstalar Docker:**
+
 ```powershell
-# Instalar Kind
-choco install kind -y
+# Instalar Kind (SIN reinstalar Docker)
+choco install kind -y --ignore-dependencies
 
 # Instalar kubectl
 choco install kubernetes-cli -y
@@ -227,6 +264,11 @@ choco install kubernetes-cli -y
 # Instalar Terraform
 choco install terraform -y
 ```
+
+**💡 ¿Por qué `--ignore-dependencies` en Kind?**
+- Kind requiere Docker, pero Chocolatey intentaría instalar `docker-desktop` de nuevo
+- `--ignore-dependencies` le dice a Chocolatey: "confía en que Docker ya está instalado"
+- Es seguro porque Docker Desktop ya funciona en tu sistema
 
 **⏱️ Tiempo total:** ~5 minutos para instalar las 3 herramientas.
 
@@ -251,7 +293,19 @@ choco info terraform
 
 ### **Actualizar todas las herramientas:**
 ```powershell
-choco upgrade kind kubectl terraform -y
+# Kind: usar --ignore-dependencies para no reinstalar Docker
+choco upgrade kind -y --ignore-dependencies
+
+# Kubectl y Terraform: actualizaciones normales
+choco upgrade kubernetes-cli terraform -y
+```
+
+### **Verificar versiones instaladas:**
+```powershell
+kind --version
+kubectl version --client
+terraform --version
+docker --version  # Verificar que Docker sigue funcionando
 ```
 
 ---
@@ -279,6 +333,7 @@ Si tienes problemas:
 
 ```powershell
 # 1. Abrir PowerShell como Administrador
+
 # 2. Instalar Chocolatey:
 Set-ExecutionPolicy Bypass -Scope Process -Force; `
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
@@ -288,7 +343,15 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 choco --version
 
 # 4. Instalar herramientas para la clase:
-choco install kind kubernetes-cli terraform -y
+# IMPORTANTE: Usa --ignore-dependencies para Kind (ya tienes Docker)
+choco install kind -y --ignore-dependencies
+choco install kubernetes-cli -y
+choco install terraform -y
+
+# 5. Verificar instalaciones:
+kind --version
+kubectl version --client
+terraform --version
 ```
 
 **¡Listo para la Clase 4!** 🚀
