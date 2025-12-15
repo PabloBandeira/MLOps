@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "workspace" {
           name  = "workspace"
           image = var.ecr_url != "" ? "${var.ecr_url}/workspace:latest" : "placeholder-workspace"
 
-          ports {
+          port {
             container_port = 8888
             name           = "http"
           }

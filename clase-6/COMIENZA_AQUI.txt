@@ -1,9 +1,9 @@
 ================================================================================
-                    🚀 CLASE 5: MLOps de KIND a AWS EKS
+                    🚀 Clase 6: MLOps de KIND a AWS EKS
              Migración de Kubernetes Local a Kubernetes en la Nube
 ================================================================================
 
-¡Bienvenido/a a la Clase 5 de MLOps!
+¡Bienvenido/a a la Clase 6 de MLOps!
 
 En esta sesión vamos a migrar toda la arquitectura de la Clase 4 
 (corriendo en KIND local) a AWS EKS (Elastic Kubernetes Service).
@@ -193,7 +193,7 @@ En esta sesión vamos a migrar toda la arquitectura de la Clase 4
 │                          ⚠️  IMPORTANTE - DIFERENCIAS KEY                 │
 └──────────────────────────────────────────────────────────────────────────┘
 
-   🔴 KIND (Clase 4)                 🟢 EKS (Clase 5)
+   🔴 KIND (Clase 4)                 🟢 EKS (Clase 6)
    ────────────────────────────────────────────────────────
    Local en tu máquina               En la nube (AWS)
    NodePort (puerto 30xxx)           LoadBalancer (DNS/IP pública)

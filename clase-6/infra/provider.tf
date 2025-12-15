@@ -16,16 +16,6 @@ terraform {
 # AWS Provider
 provider "aws" {
   region = var.aws_region
-  
-  default_tags {
-    tags = {
-      Environment = var.environment
-      Project     = var.project
-      Owner       = var.owner
-      CreatedBy   = "Terraform"
-      CreatedAt   = timestamp()
-    }
-  }
 }
 
 # Kubernetes Provider (configurado con el endpoint de EKS)

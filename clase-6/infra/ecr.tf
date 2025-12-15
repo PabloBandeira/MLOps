@@ -38,50 +38,50 @@ resource "aws_ecr_repository" "workspace" {
   }
 }
 
-# Lifecycle policies para limpiar imágenes antiguas (opcional)
-resource "aws_ecr_lifecycle_policy" "iris_api_policy" {
-  repository = aws_ecr_repository.iris_api.name
-
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1
-        description  = "Keep last 10 images"
-        selection = {
-          tagStatus     = "tagged"
-          tagPrefixList = [""]
-          countType     = "imageCountMoreThan"
-          countNumber   = 10
-        }
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_ecr_lifecycle_policy" "workspace_policy" {
-  repository = aws_ecr_repository.workspace.name
-
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1
-        description  = "Keep last 10 images"
-        selection = {
-          tagStatus     = "tagged"
-          tagPrefixList = [""]
-          countType     = "imageCountMoreThan"
-          countNumber   = 10
-        }
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
-}
+# Lifecycle policies comentadas - agregar después si es necesario
+# resource "aws_ecr_lifecycle_policy" "iris_api_policy" {
+#   repository = aws_ecr_repository.iris_api.name
+#
+#   policy = jsonencode({
+#     rules = [
+#       {
+#         rulePriority = 1
+#         description  = "Keep last 10 images"
+#         selection = {
+#           tagStatus     = "tagged"
+#           tagPrefixList = ["v"]
+#           countType     = "imageCountMoreThan"
+#           countNumber   = 10
+#         }
+#         action = {
+#           type = "expire"
+#         }
+#       }
+#     ]
+#   })
+# }
+#
+# resource "aws_ecr_lifecycle_policy" "workspace_policy" {
+#   repository = aws_ecr_repository.workspace.name
+#
+#   policy = jsonencode({
+#     rules = [
+#       {
+#         rulePriority = 1
+#         description  = "Keep last 10 images"
+#         selection = {
+#           tagStatus     = "tagged"
+#           tagPrefixList = ["v"]
+#           countType     = "imageCountMoreThan"
+#           countNumber   = 10
+#         }
+#         action = {
+#           type = "expire"
+#         }
+#       }
+#     ]
+#   })
+# }
 
 # ============================================================================
 # OUTPUTS

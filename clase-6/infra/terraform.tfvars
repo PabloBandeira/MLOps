@@ -8,15 +8,15 @@
 aws_region = "us-east-1"
 
 # EKS Cluster Configuration
-cluster_name        = "mlops-cluster-prod"
-kubernetes_version  = "1.28"
+cluster_name        = "mlops-cluster-dev"
+kubernetes_version  = "1.32"
 
 # Node Configuration (¡IMPORTANTE PARA COSTOS!)
 # Para development: usar t3.micro o t3.small
 # Para testing: usar t3.medium
 # Para production: usar t3.large o mayor
-node_instance_type = "t3.medium"
-desired_capacity   = 2
+node_instance_type = "t3.micro"
+desired_capacity   = 1
 min_capacity       = 1
 max_capacity       = 4
 
@@ -58,7 +58,7 @@ workspace_memory_limit     = "2Gi"
 # Tags for Organization
 environment = "development"
 project     = "mlops-clase5"
-owner       = "tu-nombre"
+owner       = "PabloB"
 
 # ============================================================================
 # INSTRUCCIONES:

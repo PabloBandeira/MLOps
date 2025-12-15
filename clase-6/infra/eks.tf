@@ -97,8 +97,9 @@ resource "aws_eks_node_group" "main" {
 resource "aws_eks_addon" "vpc_cni" {
   cluster_name             = aws_eks_cluster.main.name
   addon_name               = "vpc-cni"
-  addon_version            = "v1.14.1-eksbuild.1"
-  resolve_conflicts        = "OVERWRITE"
+  addon_version            = "v1.18.1-eksbuild.1"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
   service_account_role_arn = aws_iam_role.nodes_role.arn
 
   tags = {
@@ -108,10 +109,11 @@ resource "aws_eks_addon" "vpc_cni" {
 
 # CoreDNS (DNS)
 resource "aws_eks_addon" "coredns" {
-  cluster_name      = aws_eks_cluster.main.name
-  addon_name        = "coredns"
-  addon_version     = "v1.10.1-eksbuild.2"
-  resolve_conflicts = "OVERWRITE"
+  cluster_name            = aws_eks_cluster.main.name
+  addon_name              = "coredns"
+  addon_version           = "v1.11.1-eksbuild.4"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
 
   tags = {
     Name = "${local.cluster_name}-coredns"
@@ -122,10 +124,11 @@ resource "aws_eks_addon" "coredns" {
 
 # kube-proxy (Networking)
 resource "aws_eks_addon" "kube_proxy" {
-  cluster_name      = aws_eks_cluster.main.name
-  addon_name        = "kube-proxy"
-  addon_version     = "v1.28.1-eksbuild.1"
-  resolve_conflicts = "OVERWRITE"
+  cluster_name            = aws_eks_cluster.main.name
+  addon_name              = "kube-proxy"
+  addon_version           = "v1.32.0-eksbuild.1"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
 
   tags = {
     Name = "${local.cluster_name}-kube-proxy"
@@ -138,8 +141,9 @@ resource "aws_eks_addon" "kube_proxy" {
 resource "aws_eks_addon" "ebs_csi_driver" {
   cluster_name             = aws_eks_cluster.main.name
   addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.24.0-eksbuild.1"
-  resolve_conflicts        = "OVERWRITE"
+  addon_version            = "v1.29.0-eksbuild.1"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
   service_account_role_arn = aws_iam_role.nodes_role.arn
 
   tags = {
