@@ -1,0 +1,304 @@
+================================================================================
+                    📊 RESUMEN VISUAL - CLASE 5: AWS EKS
+================================================================================
+
+🎯 OBJETIVO
+───────────
+Migrar arquitectura MLOps de Kubernetes local (KIND) a la nube (AWS EKS)
+
+
+📊 COMPARACIÓN RÁPIDA
+─────────────────────
+
+CLASE 4 (KIND)                    →    CLASE 5 (EKS)
+──────────────────────────────────────────────────────
+Tu máquina local                  →    AWS Cloud
+Docker Desktop                    →    AWS infrastructure
+0 costo                           →    ~$160/mes
+5 min setup                       →    20 min setup
+1 nodo (limitado)                 →    2+ nodos (escalable)
+NodePort (localhost:30xxx)        →    LoadBalancer (DNS público)
+Imágenes locales                  →    ECR (registry privado)
+Almacenamiento efímero           →    EBS volumes
+Debugging local fácil             →    CloudWatch logs
+
+
+🏗️ ARQUITECTURA
+───────────────
+
+KIND:
+┌──────────────────────────────────────┐
+│ Tu máquina (Docker Desktop)          │
+│ ├─ localhost:30001 → MLflow          │
+│ ├─ localhost:30002 → Evidently       │
+│ ├─ localhost:30003 → Jupyter         │
+│ └─ localhost:30004 → Iris API        │
+└──────────────────────────────────────┘
+
+
+EKS (AWS):
+┌────────────────────────────────────────────────────────┐
+│                  AWS Cloud (us-east-1)                 │
+│                                                        │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Load Balancers (DNS públicas)                    │  │
+│  │ - mlflow-xxxxx.elb.amazonaws.com:5000            │  │
+│  │ - iris-api-xxxxx.elb.amazonaws.com:8000          │  │
+│  │ - workspace-xxxxx.elb.amazonaws.com:8888         │  │
+│  └──────────────────────────────────────────────────┘  │
+│              ↓                                          │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ EKS Cluster                                      │  │
+│  │ ├─ Node 1: MLflow, Evidently, Workspace         │  │
+│  │ ├─ Node 2: Iris API (x2 replicas)               │  │
+│  │ └─ Control Plane (managed by AWS)                │  │
+│  └──────────────────────────────────────────────────┘  │
+│              ↓                                          │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Storage & Services                               │  │
+│  │ ├─ ECR (Elastic Container Registry)              │  │
+│  │ ├─ EBS (Elastic Block Storage)                   │  │
+│  │ └─ CloudWatch (Logging & Monitoring)             │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+
+
+📋 COMPONENTES DESPLEGADOS
+──────────────────────────
+
+✅ MLflow (Tracking)
+   - Imagen: ghcr.io/mlflow/mlflow:v2.10.0
+   - Replicas: 1
+   - Storage: 50GB EBS
+   - Access: http://mlflow-xxx.elb.amazonaws.com:5000
+
+✅ Evidently (Monitoring)
+   - Imagen: evidently/evidently-service:latest
+   - Replicas: 1
+   - Storage: 20GB EBS
+   - Access: http://evidently-xxx.elb.amazonaws.com:8000
+
+✅ Iris API (Inference)
+   - Imagen: tu imagen en ECR
+   - Replicas: 2 (High Availability)
+   - Load balancing: automático
+   - Auto-scaling: 2-10 replicas
+   - Access: http://iris-api-xxx.elb.amazonaws.com:8000
+
+✅ Workspace (Jupyter)
+   - Imagen: tu imagen en ECR
+   - Replicas: 1
+   - Access: http://workspace-xxx.elb.amazonaws.com:8888
+
+
+💰 COSTOS ESTIMADOS
+───────────────────
+
+Sin optimización:
+├─ EKS Control Plane    → $73/mes
+├─ 2x t3.medium nodes   → $60/mes
+├─ Load Balancers       → $20/mes
+└─ Storage + transfer   → $10/mes
+   ────────────────────────────
+   Total:                 ~$160/mes
+
+Con optimización:
+├─ EKS Control Plane    → $73/mes
+├─ 1x t3.small node     → $20/mes
+├─ Load Balancer        → $20/mes
+└─ Storage + transfer   → $5/mes
+   ────────────────────────────
+   Total:                 ~$120/mes
+
+IMPORTANTE: Destruir cuando NO uses → $0
+
+
+🚀 FLUJO DE TRABAJO
+───────────────────
+
+1. PREPARACIÓN (15 min)
+   ├─ Instalar AWS CLI, eksctl, terraform
+   ├─ Configurar credenciales AWS
+   └─ Editar infra/terraform.tfvars
+
+2. PROVISIÓN (20-30 min)
+   ├─ terraform init
+   ├─ terraform plan
+   └─ terraform apply (¡espera 15-20 min!)
+
+3. IMÁGENES (10 min)
+   ├─ docker build iris-api
+   ├─ docker build workspace
+   └─ docker push a ECR
+
+4. DESPLIEGUE (5-10 min)
+   ├─ terraform apply (nuevamente)
+   └─ kubectl get svc (obtener URLs)
+
+5. VALIDACIÓN (10 min)
+   ├─ Testear MLflow
+   ├─ Testear Jupyter
+   ├─ Testear API
+   └─ Ejecutar notebook
+
+6. LIMPIEZA (5 min) ⚠️ MUY IMPORTANTE
+   ├─ terraform destroy
+   └─ Verificar AWS Console
+
+
+📊 COMPARATIVA DETALLADA
+───────────────────────
+
+NETWORKING:
+├─ KIND:
+│  └─ NodePort: localhost:30001 → Pod:5000
+└─ EKS:
+   └─ LoadBalancer: mlflow-xxx.elb.amazonaws.com:5000
+
+IMÁGENES:
+├─ KIND:
+│  └─ Docker local: iris-api:latest
+└─ EKS:
+   └─ ECR privado: 123456789012.dkr.ecr.us-east-1.amazonaws.com/iris-api:latest
+
+ALMACENAMIENTO:
+├─ KIND:
+│  └─ Efímero (se pierde al reiniciar)
+└─ EKS:
+   └─ EBS volumes (persistente)
+
+ESCALABILIDAD:
+├─ KIND:
+│  └─ 1-3 nodos (limitado por tu PC)
+└─ EKS:
+   └─ 1-1000+ nodos (ilimitado, escalable automáticamente)
+
+MONITOREO:
+├─ KIND:
+│  └─ kubectl logs local
+└─ EKS:
+   └─ CloudWatch, X-Ray, Container Insights
+
+
+✅ CHECKLIST: ¿ESTOY LISTO?
+───────────────────────────
+
+Herramientas:
+☐ AWS CLI instalado (brew install awscliv2)
+☐ eksctl instalado (brew tap weaveworks/tap && brew install weaveworks/tap/eksctl)
+☐ kubectl instalado (brew install kubectl)
+☐ Terraform instalado (brew install terraform)
+☐ Docker Desktop corriendo
+
+Credenciales:
+☐ AWS CLI configurado (aws configure)
+☐ Credenciales verificadas (aws sts get-caller-identity)
+☐ Acceso a crear recursos en AWS
+
+Variables:
+☐ infra/terraform.tfvars editado
+☐ aws_region correcto
+☐ cluster_name único
+☐ node_instance_type apropiado
+
+Listo:
+☐ ./scripts/check-prerequisites-aws.sh pasa sin errores
+☐ Presupuesto de AWS revisado
+☐ Entendiste que cuesta dinero
+☐ Planeaste destruir después
+
+
+⚠️ ADVERTENCIAS IMPORTANTES
+───────────────────────────
+
+🔴 COSTOS
+   - EKS tiene costo mínimo de ~$73/mes solo por el control plane
+   - Cada nodo t3.medium cuesta ~$30/mes
+   - Load balancers cuestan ~$20/mes
+   - SIEMPRE destruye cuando termines de practicar
+
+🔴 SEGURIDAD
+   - NO comitees terraform.tfvars en git
+   - NO expongas credenciales AWS
+   - Usa mínimos permisos (least privilege)
+   - Revisa security groups regularmente
+
+🔴 ACCIDENTALES
+   - terraform destroy borra TODO
+   - No se puede recuperar fácilmente
+   - Los datos en EBS se pierden también
+   - Destruye solo cuando estés seguro
+
+🔴 CREDENCIALES
+   - Si pierdes tu Access Key, regenera
+   - Usa MFA en tu cuenta AWS
+   - Rotea credenciales regularmente
+   - Usa roles IAM en lugar de credenciales
+
+
+📚 DOCUMENTOS CLAVE
+───────────────────
+
+1. COMIENZA_AQUI.txt
+   → Introducción y orientación
+
+2. GUIA_MIGRACION_COMPLETA.md
+   → Paso a paso detallado con ejemplos
+
+3. COMPARACION_KIND_VS_EKS.md
+   → Análisis técnico y diferencias
+
+4. ARQUITECTURA_AWS.md
+   → Diagramas y componentes de infraestructura
+
+5. TROUBLESHOOTING_AWS.md
+   → Solución de problemas comunes
+
+6. README.md
+   → Documentación general del proyecto
+
+
+🔗 FLUJO DE LECTURA RECOMENDADO
+───────────────────────────────
+
+1. Este archivo (RESUMEN_VISUAL.txt) - 5 min
+   ↓
+2. COMIENZA_AQUI.txt - 10 min
+   ↓
+3. GUIA_MIGRACION_COMPLETA.md - 30 min (mientras ejecutas)
+   ↓
+4. ARQUITECTURA_AWS.md - 15 min
+   ↓
+5. TROUBLESHOOTING_AWS.md (si hay problemas)
+   ↓
+6. ¡LISTO! 🎉
+
+
+🎯 PRÓXIMOS PASOS DESPUÉS DE CLASE 5
+────────────────────────────────────
+
+Nivel Intermedio:
+├─ Agregar HTTPS/TLS con ACM
+├─ Usar RDS en lugar de SQLite
+├─ Implementar CI/CD con CodePipeline
+└─ Agregar monitoreo con Prometheus+Grafana
+
+Nivel Avanzado:
+├─ Multi-region deployment
+├─ Disaster recovery
+├─ Cost optimization
+└─ Security hardening (WAF, encryption, etc)
+
+Producción:
+├─ Compliance (SOC2, HIPAA, etc)
+├─ Enterprise support
+├─ Backup y disaster recovery automatizado
+└─ Auto-scaling based on metrics
+
+
+================================================================================
+                          ¡EMPECEMOS! 🚀
+       Abre COMIENZA_AQUI.txt o GUIA_MIGRACION_COMPLETA.md para comenzar
+================================================================================
+
+
