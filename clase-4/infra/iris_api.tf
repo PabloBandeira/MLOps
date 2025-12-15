@@ -66,11 +66,11 @@ resource "kubernetes_deployment" "iris_api" {
           resources {
             requests = {
               cpu    = "100m"
-              memory = "256Mi"
+              memory = "64Mi"
             }
             limits = {
               cpu    = "500m"
-              memory = "512Mi"
+              memory = "128Mi"
             }
           }
         }

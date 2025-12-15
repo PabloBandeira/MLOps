@@ -93,7 +93,7 @@ resource "kubernetes_deployment" "workspace" {
               memory = "512Mi"
             }
             limits = {
-              cpu    = "1000m"
+              cpu    = "500m"
               memory = "1Gi"
             }
           }
