@@ -1,0 +1,269 @@
+================================================================================
+                    🚀 CLASE 5: MLOps de KIND a AWS EKS
+             Migración de Kubernetes Local a Kubernetes en la Nube
+================================================================================
+
+¡Bienvenido/a a la Clase 5 de MLOps!
+
+En esta sesión vamos a migrar toda la arquitectura de la Clase 4 
+(corriendo en KIND local) a AWS EKS (Elastic Kubernetes Service).
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          📋 ORDEN DE LECTURA                              │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   1️⃣  GUIA_MIGRACION_COMPLETA.md
+       👉 EMPIEZA AQUÍ
+       📖 Guía paso a paso completa con todas las instrucciones
+       ⏱️  Tiempo estimado: 60-90 minutos
+
+   2️⃣  COMPARACION_KIND_VS_EKS.md
+       📖 Diferencias técnicas entre KIND y EKS
+       ⏱️  Tiempo estimado: 15 minutos
+
+   3️⃣  ARQUITECTURA_AWS.md
+       📖 Diagramas y explicación de la arquitectura en AWS
+       ⏱️  Tiempo estimado: 15 minutos
+
+   4️⃣  TROUBLESHOOTING_AWS.md
+       📖 Solución de problemas comunes
+       ⏱️  Tiempo estimado: Referencia continua
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🎯 OBJETIVOS DE LA CLASE                         │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   ✅ Entender las diferencias entre KIND y EKS
+   ✅ Provisionar un clúster EKS en AWS con Terraform
+   ✅ Configurar networking y security groups en AWS
+   ✅ Migrar las imágenes Docker a ECR (Elastic Container Registry)
+   ✅ Desplegar los mismos servicios en EKS
+   ✅ Configurar LoadBalancer en lugar de NodePort
+   ✅ Implementar persistent volumes con EBS
+   ✅ Optimizar costos en AWS
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🛠️  HERRAMIENTAS NECESARIAS                      │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   ✓ AWS Account con credenciales configuradas
+   ✓ AWS CLI v2
+   ✓ Docker Desktop (ya lo tienes)
+   ✓ kubectl (ya lo tienes)
+   ✓ Terraform 1.5+ (ya lo tienes)
+   ✓ eksctl (nuevo - herramienta para EKS)
+   ✓ Python 3.9+ (ya lo tienes)
+
+   💡 IMPORTANTE: Ejecuta esto primero para verificar:
+      
+      ./scripts/check-prerequisites.sh
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          ⚡ INICIO RÁPIDO                                 │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   Si ya tienes AWS CLI configurado y Terraform instalado:
+
+   1. Verifica prerrequisitos:
+      ./scripts/check-prerequisites-aws.sh
+
+   2. Configura tus variables:
+      Edita: infra/terraform.tfvars
+
+   3. Despliega todo automáticamente:
+      ./scripts/setup-eks.sh
+
+   4. Espera a que se cree el clúster (~15-20 minutos)
+
+   5. Obtén la URL del Load Balancer:
+      kubectl get svc -w
+
+   ⏱️  Tiempo total: ~30-40 minutos (incl. creación del clúster)
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          💰 COSTOS ESTIMADOS EN AWS                       │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   Por mes (si lo dejas corriendo 24/7):
+   
+   🔹 Clúster EKS           → ~$73 (flat fee)
+   🔹 2 nodos t3.medium     → ~$60 (dos meses a $30/mes cada uno)
+   🔹 Load Balancer         → ~$20
+   🔹 Storage (EBS)         → ~$5
+   ─────────────────────────────────
+   Total aproximado:        → ~$160/mes
+
+   💡 RECOMENDACIÓN: 
+      - Usa el tier gratuito si eres nuevo en AWS (12 meses gratis)
+      - Destruye el clúster cuando no lo uses (ahorro total)
+      - En desarrollo, usa t3.micro o t3.small
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          📁 ESTRUCTURA DEL PROYECTO                       │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   clase-5/
+   ├── 📄 COMIENZA_AQUI.txt          ← TÚ ESTÁS AQUÍ
+   ├── 📄 GUIA_MIGRACION_COMPLETA.md ← COMIENZA AQUÍ
+   ├── 📄 COMPARACION_KIND_VS_EKS.md
+   ├── 📄 ARQUITECTURA_AWS.md
+   ├── 📄 TROUBLESHOOTING_AWS.md
+   │
+   ├── 📁 infra/
+   │   ├── provider.tf               ← AWS provider
+   │   ├── variables.tf              ← Variables configurables
+   │   ├── outputs.tf                ← Información de salida
+   │   ├── eks.tf                    ← Clúster EKS + nodos
+   │   ├── networking.tf             ← VPC, subnets, security groups
+   │   ├── iam-roles.tf              ← Roles y políticas IAM
+   │   ├── ecr.tf                    ← Repositorios para imágenes
+   │   ├── mlflow.tf                 ← Deployment de MLflow
+   │   ├── evidently.tf              ← Deployment de Evidently
+   │   ├── iris-api.tf               ← Deployment del API
+   │   ├── workspace.tf              ← Deployment de Jupyter
+   │   ├── storage.tf                ← EBS Volumes
+   │   ├── rds.tf                    ← (Opcional) Base de datos
+   │   └── terraform.tfvars          ← Tus valores
+   │
+   ├── 📁 app_iris/                  ← APP de predicción (igual a clase-4)
+   │   ├── Dockerfile
+   │   ├── train.py
+   │   ├── main.py
+   │   └── requirements.txt
+   │
+   ├── 📁 app_workspace/             ← Jupyter (igual a clase-4)
+   │   ├── Dockerfile
+   │   └── requirements.txt
+   │
+   ├── 📁 scripts/
+   │   ├── check-prerequisites-aws.sh ← Verifica herramientas AWS
+   │   ├── setup-eks.sh              ← Despliega todo en EKS
+   │   ├── destroy-eks.sh            ← Destruye todo (¡CUIDADO!)
+   │   ├── push-to-ecr.sh            ← Sube imágenes a ECR
+   │   ├── configure-kubeconfig.sh   ← Configura acceso a EKS
+   │   └── scale-nodes.sh            ← Escalas nodos según necesidad
+   │
+   └── 📁 notebooks/                 ← Mismos notebooks de clase-4
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🔄 FLUJO DE TRABAJO                              │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   Fase 1: PREPARACIÓN (15 min)
+   ─────────────────────────────
+   1. Configurar AWS CLI
+   2. Instalar eksctl
+   3. Leer GUIA_MIGRACION_COMPLETA.md
+   4. Revisar variables de Terraform
+
+   Fase 2: PROVISIONAR (20-30 min)
+   ───────────────────────────────
+   1. Ejecutar terraform init
+   2. Ejecutar terraform plan
+   3. Ejecutar terraform apply
+   4. Esperar a que se cree EKS (¡esto toma tiempo!)
+
+   Fase 3: DESPLEGAR (10-15 min)
+   ─────────────────────────────
+   1. Construir imágenes Docker
+   2. Subir a ECR (Elastic Container Registry)
+   3. Desplegar servicios con Terraform
+   4. Verificar que todo esté corriendo
+
+   Fase 4: VALIDAR (10 min)
+   ────────────────────────
+   1. Obtener URLs de servicios
+   2. Testear acceso a MLflow, Jupyter, API
+   3. Revisar costos en AWS Console
+
+   Fase 5: LIMPIAR (5 min - IMPORTANTE)
+   ────────────────────────────────────
+   1. Ejecutar ./scripts/destroy-eks.sh
+   2. Verificar que todo se haya eliminado en AWS Console
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          ⚠️  IMPORTANTE - DIFERENCIAS KEY                 │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   🔴 KIND (Clase 4)                 🟢 EKS (Clase 5)
+   ────────────────────────────────────────────────────────
+   Local en tu máquina               En la nube (AWS)
+   NodePort (puerto 30xxx)           LoadBalancer (DNS/IP pública)
+   Imágenes Docker locales           Imágenes en ECR (registry privado)
+   Almacenamiento efímero            Persistent Volumes con EBS
+   Sin costos                        ~$160/mes (aprox)
+   1-2 nodos                         2+ nodos (escalables)
+   Clusters de Docker                Gestión por AWS
+   Debugging local fácil             Requiere logs remotos
+
+   ⚠️  RECUERDA: Cada recurso que crees en AWS tiene COSTO
+       Destruye todo cuando termines de practicar
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🔐 SEGURIDAD EN AWS                              │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   ✅ Security Groups restrictos (solo lo necesario)
+   ✅ IAM Roles con mínimos permisos (least privilege)
+   ✅ VPC privada con subnets públicas y privadas
+   ✅ Encriptación en tránsito (TLS)
+   ✅ Secrets de Kubernetes (no variables en .tf)
+
+   ⚠️  NUNCA:
+       ❌ Comitees credenciales de AWS
+       ❌ Usees 0.0.0.0/0 en security groups (muy abierto)
+       ❌ Dejes recursos corriendo sin que los uses
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          📚 RECURSOS ÚTILES                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   📖 AWS EKS Docs:           https://docs.aws.amazon.com/eks/
+   📖 Terraform AWS Docs:     https://registry.terraform.io/providers/hashicorp/aws/
+   📖 eksctl Docs:            https://eksctl.io/
+   📖 Kubernetes Docs:        https://kubernetes.io/docs/
+   📖 AWS Free Tier:          https://aws.amazon.com/free/
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🆘 ¿NECESITAS AYUDA?                             │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   1. Revisa TROUBLESHOOTING_AWS.md
+   2. Verifica los logs: kubectl logs <POD_NAME>
+   3. Revisa la AWS Console para errores
+   4. Ejecuta: ./scripts/check-prerequisites-aws.sh
+   5. Consulta con tu instructor
+
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                          🎯 PRÓXIMOS PASOS                                │
+└──────────────────────────────────────────────────────────────────────────┘
+
+   1. ✅ Lee este archivo completamente
+   2. ✅ Abre GUIA_MIGRACION_COMPLETA.md
+   3. ✅ Sigue las instrucciones paso a paso
+   4. ✅ Ejecuta ./scripts/check-prerequisites-aws.sh
+   5. ✅ Configura tus credenciales de AWS
+   6. ✅ Edita infra/terraform.tfvars con tus valores
+   7. ✅ Ejecuta ./scripts/setup-eks.sh
+   8. ✅ ¡Disfruta tu clúster en la nube!
+   9. ✅ Ejecuta ./scripts/destroy-eks.sh cuando termines
+
+
+================================================================================
+                        Ahora abre GUIA_MIGRACION_COMPLETA.md
+                                   ¡A por ello! 🚀
+================================================================================
+
+
