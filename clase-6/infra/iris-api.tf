@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "iris_api" {
           name  = "iris-api"
           image = var.ecr_url != "" ? "${var.ecr_url}/iris-api:latest" : "placeholder-iris-api"
 
-          ports {
+          port {
             container_port = 8000
             name           = "http"
           }
@@ -153,7 +153,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "iris_api" {
     behavior {
       scale_down {
         stabilization_window_seconds = 300
-        policies {
+        policy {
           type                 = "Percent"
           value                = 50
           period_seconds       = 60
@@ -161,7 +161,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "iris_api" {
       }
       scale_up {
         stabilization_window_seconds = 0
-        policies {
+        policy {
           type                 = "Percent"
           value                = 100
           period_seconds       = 30

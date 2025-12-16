@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "mlflow" {
           name  = "mlflow"
           image = var.mlflow_image
 
-          ports {
+          port {
             container_port = 5000
             name           = "http"
           }

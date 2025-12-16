@@ -32,7 +32,7 @@ resource "kubernetes_deployment" "evidently" {
           name  = "evidently"
           image = var.evidently_image
 
-          ports {
+          port {
             container_port = 8000
             name           = "http"
           }

@@ -1,10 +1,20 @@
 # Terraform
 .terraform/
 .terraform.lock.hcl
-*.tfstate
-*.tfstate.*
-*.tfvars
-!terraform.tfvars.example
+terraform.tfstate
+terraform.tfstate.*
+*.tfplan
+*.backup
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Kubernetes/kubectl
+.kube/
+kubeconfig
 
 # Python
 __pycache__/
@@ -39,33 +49,16 @@ wheels/
 *~
 .DS_Store
 
-# AWS
-.aws/
+# AWS/Local
+.aws/credentials
+.aws/config
 *.pem
 *.key
 
-# Docker
-docker-compose.override.yml
-
-# Jupyter Notebook
-.ipynb_checkpoints/
-*.ipynb
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# OS
-.DS_Store
-Thumbs.db
-
 # Logs
 *.log
-logs/
 
-# Temporary files
-*.tmp
-*.temp
-*.bak
-
+# Otros
+node_modules/
+dist/
+build/
